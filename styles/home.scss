@@ -1,60 +1,72 @@
 .home {
   width: 100vw;
-  height: 100vh;
+  height: 90vh;
   // background-color: #f2f1f2;
 
   // display: flex;
   // align-items: center;
   // flex-direction: column;
   // justify-content: space-between;
-  color: black;
+  // color: black;
   padding: 50px;
   font-family: "Poppins", sans-serif;
 
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(12, 1fr);
+  // display: grid;
+  // grid-template-columns: repeat(12, 1fr);
+  // grid-template-rows: repeat(12, 1fr);
+  // justify-items: center;
 
-  h1 {
-    grid-area: 8 / span 2 / 12 / span 2;
-  }
+  .home-cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    .home-hero {
+      // font-family: "argesta_displayregular";
+      // font-family: 'Merriweather', serif;
+      font-family: "Poppins", sans-serif;
+      font-family: HelveticaNowDisplay-Regular, Helvetica Neue, Helvetica, Arial,
+        sans-serif;
+      font-size: 5vw;
+      // text-align: center;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
 
-  .image {
-    position: relative;
-    grid-area: 3/8/7 / span 5;
+    .image {
+      position: relative;
+      grid-area: 3/8/7 / span 5;
 
-    > span {
-      &:nth-child(1) {
-        z-index: 1;
-      }
-      &:nth-child(2) {
-        transform: rotateZ(8deg);
-        transform-origin: right bottom;
-        /* z-index: 0; */
-        opacity: 0.4 !important;
-        filter: grayscale(1);
-      }
-      &:nth-child(3) {
-        transform: rotateZ(-15deg);
-        transform-origin: right bottom;
-        /* z-index: 0; */
-        opacity: 0.5 !important;
-        filter: grayscale(0.5);
+      > span {
+        &:nth-child(1) {
+          z-index: 1;
+        }
+        &:nth-child(2) {
+          transform: rotateZ(8deg);
+          transform-origin: right bottom;
+          /* z-index: 0; */
+          opacity: 0.4 !important;
+          filter: grayscale(1);
+        }
+        &:nth-child(3) {
+          transform: rotateZ(-15deg);
+          transform-origin: right bottom;
+          /* z-index: 0; */
+          opacity: 0.5 !important;
+          filter: grayscale(0.5);
+        }
       }
     }
   }
-  .copyright {
-    grid-area: 12 / 10 / 12 / span 3;
+  h1 {
+    // grid-area: 3 / span 2 / 12 / span 2;
   }
-}
-
-.big-bold-font {
-  // font-family: "argesta_displayregular";
-  // font-family: 'Merriweather', serif;
-  font-size: 10vw;
-  text-align: center;
-  text-transform: uppercase;
-  font-weight: 400;
+  .copyright {
+    // grid-area: 12 / 10 / 12 / span 3;
+  }
 }
 
 .nav-bar {
@@ -68,7 +80,11 @@
   justify-content: space-between;
   padding: 50px;
 
+  line-height: 1.1;
   font-weight: 400;
+  font-size: 0.83333vw;
+  text-transform: lowercase;
+  line-height: 1em;
 
   .nav-bar-left {
     flex: 1;
@@ -82,4 +98,68 @@
 
     text-align: right;
   }
+}
+.reel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  position: fixed;
+  height: 100vh;
+  margin: 0 -50px;
+  .resp-iframe {
+    box-sizing: border-box;
+    height: 56.25%;
+    width: 177.77777778%;
+  }
+  .fade {
+    transition: opacity 0.3s ease-in-out;
+    &.fade-out {
+      opacity: 0;
+    }
+    &.fade-in {
+      opacity: 1;
+    }
+  }
+}
+
+.secondary-cursor {
+  z-index: 1000;
+
+  position: fixed;
+  pointer-events: none;
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  mix-blend-mode: difference;
+  border-radius: 100%;
+}
+
+.top-scroll-wrapper {
+  // position: absolute;
+  // height: 28px;
+  // right: 3px;
+	display: flex;
+	justify-content: center;
+  .top-scroll-text {
+    transform: rotate(90deg);
+    transform-origin: bottom left;
+    opacity: 1;
+    white-space: nowrap;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+  }
+
+	.top-scroll-line {
+    width: 1px;
+    height: 80px;
+    background-color: #ddd;
+    overflow: hidden;
+
+		.top-scroll-line-in {
+			width: 1px;
+			height: 240px;
+			background-color: white;
+		}
+	}
 }
