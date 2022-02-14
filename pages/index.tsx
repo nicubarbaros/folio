@@ -28,11 +28,22 @@ const Home: NextPage = () => {
         <div className="home">
           <HomeCover />
           <ScrollIndicator />
-          {/* <p className="copyright">©{year} Nicu Barbaros</p> */}
-          {/* <p className="copyright">
-          <ArrowDown width={100} height={100} />
-        </p> */}
         </div>
+        <section className="section">
+          <div className="image">
+            <Image src={'/images/home2.jpeg'} objectFit="cover" layout="fill" />
+            {/* <Image src={"/images/profile.jpeg"} objectFit="cover" layout="f	ill" /> */}
+            {/* <Image src={"/images/home2.jpeg"} objectFit="cover" layout="fill" /> */}
+          </div>
+        </section>
+        <section className="section">
+          <p className="full-paragraph">
+            {/* I’m a moldavian creative front end developer, I create interfaces, help with art direction, and appreciate polished
+          motion design pieces. I also bake in free time. */}
+            I’m a moldavian Front End developer, content creator on YouTube, help with Creative Front End development
+            growth, and appreciate polished web design pieces. I also bake in free time.
+          </p>
+        </section>
       </>
     </CursorManager>
   );
