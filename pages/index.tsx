@@ -46,20 +46,25 @@ const Home: NextPage = () => {
           </p>
         </section>
 
+        <section className="section">
+          <h1>Projects</h1>
+
+          <p>Placeholder for some sort of webgl based images/sliders/grid</p>
+        </section>
+
         <footer className="footer">
           <h6>Nicu Barbaros</h6>
 
           <div>
-            <Link href="https://twitter.com/nicubarbaros" passHref>
-              <a target="_blank" rel="noopener noreferrer">
-                Twitter
-              </a>
-            </Link>
-            <Link href="https://twitter.com/nicubarbaros" passHref>
-              <a target="_blank" rel="noopener noreferrer">
-                YouTube
-              </a>
-            </Link>
+            <a href="https://twitter.com/nicubarbaros" target="_blank" rel="noopener noreferrer">
+              Twitter
+            </a>
+            <a href="https://youtube.com/c/WebUnlocked" target="_blank" rel="noopener noreferrer">
+              YouTube
+            </a>
+            <a href="https://github.com/nicubarbaros" target="_blank" rel="noopener noreferrer">
+              Github
+            </a>
           </div>
 
           <h6>({year}), all rights reserved</h6>
