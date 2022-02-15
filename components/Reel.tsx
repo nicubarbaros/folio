@@ -29,18 +29,16 @@ export default function Reel({ src }: Props) {
       <iframe
         title={src}
         className={`resp-iframe fade ${fade}`}
-        src={
-          "https://player.vimeo.com/video/477735526?autoplay=1&loop=1&autopause=0"
-        }
+        src={'https://player.vimeo.com/video/477735526?autoplay=1&loop=1&autopause=0'}
         width="640"
         height="360"
-        frameborder="0"
-        webkitallowfullscreen
-        autoPlay="1"
-        mozallowfullscreen
-        allowfullscreen
+        // frameborder="0"
+        // webkitallowfullscreen
+        // autoPlay="1"
+        // mozallowfullscreen
+        // allowfullscreen
         allow="autoplay; fullscreen; picture-in-picture"
-        controls="0"
+        // controls="0"
       ></iframe>
     </div>
   );
