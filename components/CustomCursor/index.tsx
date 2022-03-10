@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { CursorContext } from "./CursorManager";
+import React, { useContext, useEffect } from 'react';
+import { CursorContext } from './CursorManager';
 
 function lerp(start: number, end: number, amt: number) {
   return (1 - amt) * start + amt * end;
@@ -14,20 +14,18 @@ const CustomCursor = ({ speed = 0.1 }) => {
     destinationY: 0,
     distanceX: 0,
     distanceY: 0,
-    key: -1,
+    key: -1
   });
 
   useEffect(() => {
-    document.addEventListener("mousemove", (event) => {
+    document.addEventListener('mousemove', event => {
       if (positionRef.current && mainCursor.current) {
         const { clientX, clientY } = event;
 
         const mouseX = clientX;
         const mouseY = clientY;
-        positionRef.current.mouseX =
-          mouseX - mainCursor.current.clientWidth / 2;
-        positionRef.current.mouseY =
-          mouseY - mainCursor.current.clientHeight / 2;
+        positionRef.current.mouseX = mouseX - mainCursor.current.clientWidth / 2;
+        positionRef.current.mouseY = mouseY - mainCursor.current.clientHeight / 2;
       }
     });
 
@@ -37,25 +35,14 @@ const CustomCursor = ({ speed = 0.1 }) => {
   useEffect(() => {
     const followMouse = () => {
       positionRef.current.key = requestAnimationFrame(followMouse);
-      const {
-        mouseX,
-        mouseY,
-        destinationX,
-        destinationY,
-        distanceX,
-        distanceY,
-      } = positionRef.current;
+      const { mouseX, mouseY, destinationX, destinationY, distanceX, distanceY } = positionRef.current;
       if (!destinationX || !destinationY) {
         positionRef.current.destinationX = lerp(0, mouseX, 0.2);
         positionRef.current.destinationY = lerp(0, mouseY, 0.2);
       } else {
         positionRef.current.distanceX = lerp(destinationX, mouseX, 0.2);
         positionRef.current.distanceY = lerp(destinationY, mouseY, 0.2);
-        if (
-          Math.abs(positionRef.current.distanceX) +
-            Math.abs(positionRef.current.distanceY) <
-          0.1
-        ) {
+        if (Math.abs(positionRef.current.distanceX) + Math.abs(positionRef.current.distanceY) < 0.1) {
           positionRef.current.destinationX = mouseX;
           positionRef.current.destinationY = mouseY;
         } else {

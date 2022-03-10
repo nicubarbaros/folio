@@ -1,13 +1,13 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from "next/image";
-import { useEffect } from "react";
-import randomColor from "randomcolor";
-import { ArrowDown } from "react-feather";
-import HomeCover from "../components/HomeCover";
-import CustomCursor from "../components/CustomCursor";
-import CursorManager from "../components/CustomCursor/CursorManager";
-import ScrollIndicator from "../components/CustomCursor/ScrollIndicator";
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import { useEffect } from 'react';
+import randomColor from 'randomcolor';
+import { ArrowDown } from 'react-feather';
+import HomeCover from '../components/HomeCover';
+import CustomCursor from '../components/CustomCursor';
+import CursorManager from '../components/CustomCursor/CursorManager';
+import ScrollIndicator from '../components/CustomCursor/ScrollIndicator';
 import Link from 'next/link';
 
 const Home: NextPage = () => {
@@ -74,4 +74,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home
+export default Home;
