@@ -13,7 +13,7 @@ const variants: Variants = {
   },
   animate: delay => ({
     y: 0,
-    transition: { delay: delay * 0.1, duration: 0.75, ease: [0.43, 0.13, 0.23, 0.96] }
+    transition: { delay: 0.5 + delay * 0.1, duration: 0.75, ease: [0.43, 0.13, 0.23, 0.96] }
   })
 };
 

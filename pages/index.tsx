@@ -1,76 +1,47 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { useEffect } from 'react';
-import randomColor from 'randomcolor';
+import { useEffect, useState } from 'react';
 import { ArrowDown } from 'react-feather';
 import HomeCover from '../components/HomeCover';
 import CustomCursor from '../components/CustomCursor';
 import CursorManager from '../components/CustomCursor/CursorManager';
-import ScrollIndicator from '../components/CustomCursor/ScrollIndicator';
+import ScrollIndicator from '../components/ScrollIndicator';
 import Link from 'next/link';
+import HomeLoader from '../components/HomeLoader';
+import Footer from '../components/Footer';
 
 const Home: NextPage = () => {
-  const year = new Date().getFullYear();
-
-  useEffect(() => {
-    // const color = randomColor({
-    //   luminosity: "dark",
-    //   format: "rgba",
-    //   alpha: 0.5, // e.g. 'rgba(9, 1, 107, 0.5)',
-    // });
-    // document.body.style.backgroundColor = color;
-  }, []);
   return (
-    <CursorManager>
-      <>
-        <CustomCursor />
-
-        <div className="home">
-          <HomeCover />
-          <ScrollIndicator />
+    <>
+      <div className="home">
+        <HomeCover />
+        <ScrollIndicator />
+      </div>
+      <section className="section about-image">
+        <div className="image">
+          <Image src={'/images/home2.jpeg'} objectFit="cover" layout="fill" />
+          {/* <Image src={"/images/profile.jpeg"} objectFit="cover" layout="f	ill" /> */}
+          {/* <Image src={"/images/home2.jpeg"} objectFit="cover" layout="fill" /> */}
         </div>
-        <section className="section about-image">
-          <div className="image">
-            <Image src={'/images/home2.jpeg'} objectFit="cover" layout="fill" />
-            {/* <Image src={"/images/profile.jpeg"} objectFit="cover" layout="f	ill" /> */}
-            {/* <Image src={"/images/home2.jpeg"} objectFit="cover" layout="fill" /> */}
-          </div>
-        </section>
-        <section className="section about-text">
-          <p className="full-paragraph">
-            {/* I’m a moldavian creative front end developer, I create interfaces, help with art direction, and appreciate polished
+      </section>
+      <section className="section about-text">
+        <p className="full-paragraph">
+          {/* I’m a moldavian creative front end developer, I create interfaces, help with art direction, and appreciate polished
           motion design pieces. I also bake in free time. */}
-            I’m a moldavian Front End developer, content creator on YouTube, help with Creative Front End development
-            growth, and appreciate polished web design pieces. I also bake in free time.
-          </p>
-        </section>
+          I’m a moldavian Front End developer, content creator on YouTube, help with Creative Front End development
+          growth, and appreciate polished web design pieces. I also bake in free time.
+        </p>
+      </section>
 
-        <section className="section">
-          <h1>Projects</h1>
+      <section className="section">
+        <h1>Projects</h1>
 
-          <p>Placeholder for some sort of webgl based images/sliders/grid</p>
-        </section>
+        <p>Placeholder for some sort of webgl based images/sliders/grid</p>
+      </section>
 
-        <footer className="footer">
-          <h6>Nicu Barbaros</h6>
-
-          <div>
-            <a href="https://twitter.com/nicubarbaros" target="_blank" rel="noopener noreferrer">
-              Twitter
-            </a>
-            <a href="https://youtube.com/c/WebUnlocked" target="_blank" rel="noopener noreferrer">
-              YouTube
-            </a>
-            <a href="https://github.com/nicubarbaros" target="_blank" rel="noopener noreferrer">
-              Github
-            </a>
-          </div>
-
-          <h6>({year}), all rights reserved</h6>
-        </footer>
-      </>
-    </CursorManager>
+      <Footer />
+    </>
   );
 };
 

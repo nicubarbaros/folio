@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { motion, Variants } from 'framer-motion';
 
 const variants: Variants = {
@@ -10,7 +10,7 @@ const variants: Variants = {
   animate: {
     y: 0,
     opacity: 1,
-    transition: { duration: 1, ease: [0.43, 0.13, 0.23, 0.96] }
+    transition: { duration: 1, ease: [0.43, 0.13, 0.23, 0.96], delay: 0.6 }
   }
 };
 export default function Header() {

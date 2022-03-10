@@ -1,5 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { CursorContext } from './CursorManager';
+import cn from 'classnames';
 
 function lerp(start: number, end: number, amt: number) {
   return (1 - amt) * start + amt * end;
@@ -17,9 +18,13 @@ const CustomCursor = ({ speed = 0.1 }) => {
     key: -1
   });
 
+  const [visible, setVisibility] = useState(false);
+
   useEffect(() => {
-    document.addEventListener('mousemove', event => {
+    function setMousePosition(event: MouseEvent) {
       if (positionRef.current && mainCursor.current) {
+        if (!visible) setVisibility(true);
+
         const { clientX, clientY } = event;
 
         const mouseX = clientX;
@@ -27,9 +32,12 @@ const CustomCursor = ({ speed = 0.1 }) => {
         positionRef.current.mouseX = mouseX - mainCursor.current.clientWidth / 2;
         positionRef.current.mouseY = mouseY - mainCursor.current.clientHeight / 2;
       }
-    });
+    }
+    document.addEventListener('mousemove', setMousePosition);
 
-    return () => {};
+    return () => {
+      document.removeEventListener('mousemove', setMousePosition);
+    };
   }, []);
 
   useEffect(() => {
@@ -58,7 +66,7 @@ const CustomCursor = ({ speed = 0.1 }) => {
 
   return (
     <div className="cursor-wrapper">
-      <div className="secondary-cursor" ref={mainCursor}></div>
+      <div className={cn('secondary-cursor', { 'as-visible': visible })} ref={mainCursor}></div>
     </div>
   );
 };
