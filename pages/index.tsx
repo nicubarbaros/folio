@@ -10,6 +10,7 @@ import ScrollIndicator from '../components/ScrollIndicator';
 import Link from 'next/link';
 import HomeLoader from '../components/HomeLoader';
 import Footer from '../components/Footer';
+import AnimatedParagraph from '../components/AnimatedParagraph';
 
 const Home: NextPage = () => {
   return (
@@ -26,12 +27,7 @@ const Home: NextPage = () => {
         </div>
       </section>
       <section className="section about-text">
-        <p className="full-paragraph">
-          {/* I’m a moldavian creative front end developer, I create interfaces, help with art direction, and appreciate polished
-          motion design pieces. I also bake in free time. */}
-          I’m a moldavian Front End developer, content creator on YouTube, help with Creative Front End development
-          growth, and appreciate polished web design pieces. I also bake in free time.
-        </p>
+        <AnimatedParagraph />
       </section>
 
       <section className="section">

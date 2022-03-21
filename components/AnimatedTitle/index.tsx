@@ -1,39 +1,19 @@
-import React from 'react';
-import { motion, Variants } from 'framer-motion';
+import React, { useRef } from 'react';
 
 import styles from './index.module.scss';
+import { useSplitText } from '../../hooks/useSplitText';
 
 type Props = {
   text: string;
 };
 
-const variants: Variants = {
-  initial: {
-    y: '100%'
-  },
-  animate: delay => ({
-    y: 0,
-    transition: { delay: 0.5 + delay * 0.1, duration: 0.75, ease: [0.43, 0.13, 0.23, 0.96] }
-  })
-};
-
 export default function AnimatedTitle({ text }: Props) {
-  const chars = text.split('');
+  const ref = useRef<HTMLDivElement>(null);
+  useSplitText(ref, 'chars', { duration: 0.75, stagger: 0.1, ease: 'power4.out', delay: 0.5 });
 
   return (
-    <div className="overflow flex">
-      {chars.map((char, index) => (
-        <motion.div
-          key={index}
-          custom={index}
-          className={styles.title}
-          variants={variants}
-          initial={'initial'}
-          animate={'animate'}
-        >
-          {char}
-        </motion.div>
-      ))}
+    <div className={styles.title} ref={ref}>
+      {text}
     </div>
   );
 }
