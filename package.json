@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mailchimp/mailchimp_marketing": "^3.0.74",
     "classnames": "^2.3.1",
     "gsap": "^3.9.1",
     "next": "12.0.10",
