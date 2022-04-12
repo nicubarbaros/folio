@@ -1,21 +1,14 @@
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { ArrowDown } from 'react-feather';
 import HomeCover from '../components/HomeCover';
-import CustomCursor from '../components/CustomCursor';
-import CursorManager from '../components/CustomCursor/CursorManager';
 import ScrollIndicator from '../components/ScrollIndicator';
-import Link from 'next/link';
-import HomeLoader from '../components/HomeLoader';
 import Footer from '../components/Footer';
 import AnimatedParagraph from '../components/AnimatedParagraph';
 
 const Home: NextPage = () => {
   return (
-    <>
-      <div className="home">
+    <div className="home-container">
+      <div className="home-hero">
         <HomeCover />
         <ScrollIndicator />
       </div>
@@ -30,14 +23,14 @@ const Home: NextPage = () => {
         <AnimatedParagraph />
       </section>
 
-      <section className="section">
-        <h1>Projects</h1>
+      {/* <section className="section">
+                <h1>Projects</h1>
 
-        <p>Placeholder for some sort of webgl based images/sliders/grid</p>
-      </section>
+                <p>Placeholder for some sort of webgl based images/sliders/grid</p>
+              </section> */}
 
       <Footer />
-    </>
+    </div>
   );
 };
 
