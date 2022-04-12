@@ -1,8 +1,5 @@
 const mailchimp = require('@mailchimp/mailchimp_marketing');
 
-const APIKEY = 'e005fc6885aa8a69d79df72f6cd498ae-us14';
-const LISTID = '6e70fc0664';
-
 mailchimp.setConfig({
   apiKey: process.env.MAILCHIMP_API_KEY,
   server: process.env.MAILCHIMP_API_SERVER
