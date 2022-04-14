@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SubscribedAmount from '../components/Roadmap/SubscribedAmount';
 
 export default function Roadmap() {
   const [email, setEmail] = useState('');
@@ -42,6 +43,8 @@ export default function Roadmap() {
       </form>
 
       {message && <div>{message}</div>}
+
+      <SubscribedAmount />
     </div>
   );
 }

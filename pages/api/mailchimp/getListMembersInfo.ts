@@ -7,23 +7,13 @@ mailchimp.setConfig({
   server: process.env.MAILCHIMP_API_SERVER
 });
 
-// TODO: add type of response
 export default async function handler(req: NextApiRequest, res: NextApiResponse<unknown>) {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
-  }
-
-  console.log(process.env.MAILCHIMP_API_KEY);
   try {
-    await mailchimp.lists.addListMember(process.env.MAILCHIMP_AUDIENCE_ID, {
-      email_address: email,
-      status: 'subscribed'
-    });
+    const response = await mailchimp.lists.getListMembersInfo(process.env.MAILCHIMP_AUDIENCE_ID);
 
-    return res.status(201).json({ error: '' });
+    return res.status(200).json(response);
   } catch (error: any) {
+    console.log(error);
     return res.status(500).json({ error: error.message || error.toString() });
   }
 }

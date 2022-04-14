@@ -10,10 +10,8 @@ import { useRouter } from 'next/router';
 function MyApp({ Component, pageProps }: AppProps) {
   const [loader, setLoader] = useState(true);
   const router = useRouter();
-  console.log(router);
 
   const { pathname } = router;
-  console.log(pathname);
   if (pathname === '/roadmap') {
     return <Component {...pageProps} />;
   }
