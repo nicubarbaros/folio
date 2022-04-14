@@ -4,12 +4,13 @@ import SubscribedAmount from '../components/Roadmap/SubscribedAmount';
 export default function Roadmap() {
   const [email, setEmail] = useState('');
 
-  const [message, setMessage] = useState(null);
-  const handleChange = event => {
+  const [message, setMessage] = useState('');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const response = await fetch('/api/mailchimp/subscribe', {
       method: 'POST',
