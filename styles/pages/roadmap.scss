@@ -25,29 +25,33 @@
   }
 
   .roadmap-form {
-    width: 70%;
+    width: 100%;
+    max-width: 1000px;
     margin: 0 auto;
     display: flex;
+    flex-wrap: wrap;
 
     .roadmap-input {
-      flex: 1;
-      padding: 24px;
+      flex: 8;
       border-radius: 4px;
       box-shadow: none;
 
       border: 1px solid #d8d8d8;
     }
 
+    .roadmap-input,
     .roadmap-button {
+      padding: 24px;
+    }
+
+    .roadmap-button {
+      flex: 2;
       color: white;
       background: linear-gradient(180deg, #0057ff 0%, #0d5dfd 100%);
 
       border-radius: 4px;
       border: none;
-      height: 100%;
-      width: 200px;
       font-size: 20px;
-
       transition: all 0.3s ease-in-out;
 
       &:hover,
@@ -63,8 +67,8 @@
     gap: 12px;
 
     justify-content: center;
-
     align-items: center;
+    flex-wrap: wrap;
     .subscribers-avatars {
       svg {
         background-color: white;
