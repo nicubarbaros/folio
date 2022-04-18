@@ -33,9 +33,10 @@ const charVariants: Variants = {
 
 type Props = {
   setLoader: (value: boolean) => void;
+  title: string;
 };
-export default function HomeLoader({ setLoader }: Props) {
-  const chars = 'folio'.split('');
+export default function HomeLoader({ setLoader, title }: Props) {
+  const chars = title.split('');
   const textControls = useAnimation();
   const containerControls = useAnimation();
 

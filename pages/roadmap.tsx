@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Footer from '../components/Footer';
 import SubscribedAmount from '../components/Roadmap/SubscribedAmount';
 
 export default function Roadmap() {
@@ -32,6 +33,7 @@ export default function Roadmap() {
   return (
     <div className="roadmap-container">
       <h1 className="roadmap-title">Roadmap to becoming a Creative Developer</h1>
+
       <div>
         <p className="roadmap-paragraph">
           Level up your professional knowledge. <br />

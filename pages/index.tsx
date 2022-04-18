@@ -20,7 +20,10 @@ const Home: NextPage = () => {
         </div>
       </section>
       <section className="section about-text">
-        <AnimatedParagraph />
+        <AnimatedParagraph
+          paragraph="I’m a moldavian Front End developer, content creator on YouTube, help with Creative Front End development growth,
+      and appreciate polished web design pieces. I also bake in free time."
+        />
       </section>
 
       {/* <section className="section">
