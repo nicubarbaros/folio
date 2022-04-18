@@ -13,7 +13,15 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const { pathname } = router;
   if (pathname === '/roadmap') {
-    return <Component {...pageProps} />;
+    return (
+      <CursorManager>
+        <>
+          <CustomCursor />
+
+          <Component {...pageProps} />
+        </>
+      </CursorManager>
+    );
   }
   return (
     <CursorManager>
