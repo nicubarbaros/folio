@@ -43,7 +43,7 @@ export default function Roadmap() {
         description="Level up your professional knowledge."
         type="website"
         url="https://nicubarbaros.com/roadmap"
-        image="https://nicubarbaros.com/images/roadmap.png"
+        image="https://nicubarbaros.com/images/roadmap.jpeg"
       />
 
       {/* <NextSeo
