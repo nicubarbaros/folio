@@ -13,32 +13,36 @@ type Props = {
 
 const socialTags = ({ type, url, title, description, image, createdAt }: Props) => {
   const metaTags = [
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: title },
-    { name: 'twitter:description', content: description },
+    { name: 'twitter:card', content: 'summary_large_image', type: 'twitter' },
+    { name: 'twitter:title', content: title, type: 'twitter' },
+    { name: 'twitter:description', content: description, type: 'twitter' },
 
-    { name: 'twitter:image', content: image },
+    { name: 'twitter:image', content: image, type: 'twitter' },
     {
       name: 'twitter:creator',
-      content: settings && settings.meta && settings.meta.social && settings.meta.social.twitter
+      content: settings && settings.meta && settings.meta.social && settings.meta.social.twitter,
+      type: 'twitter'
     },
     {
       name: 'twitter:site',
-      content: settings && settings.meta && settings.meta.social && settings.meta.social.twitter
+      content: settings && settings.meta && settings.meta.social && settings.meta.social.twitter,
+      type: 'twitter'
     },
 
-    { name: 'og:title', content: title },
-    { name: 'og:type', content: type },
-    { name: 'og:url', content: url },
-    { name: 'og:image', content: image },
-    { name: 'og:description', content: description },
+    { name: 'og:title', content: title, type: 'og' },
+    { name: 'og:type', content: type, type: 'og' },
+    { name: 'og:url', content: url, type: 'og' },
+    { name: 'og:image', content: image, type: 'og' },
+    { name: 'og:description', content: description, type: 'og' },
     {
       name: 'og:site_name',
-      content: settings && settings.meta && settings.meta.title
+      content: settings && settings.meta && settings.meta.title,
+      type: 'og'
     },
     {
       name: 'og:published_time',
-      content: createdAt || new Date().toISOString()
+      content: createdAt || new Date().toISOString(),
+      type: 'og'
     }
     // {
     //   name: 'og:modified_time',
@@ -61,8 +65,11 @@ const SEO = (props: Props) => {
       <meta itemProp="name" content={title} />
       <meta itemProp="description" content={description} />
       <meta itemProp="image" content={image} />
-      {socialTags(props).map(({ name, content }) => {
-        return <meta key={name} name={name} content={content} />;
+      {socialTags(props).map(element => {
+        if (element.type === 'twitter') {
+          return <meta key={element.name} name={element.name} content={element.content} />;
+        }
+        return <meta key={element.name} property={element.name} content={element.content} />;
       })}
     </Head>
   );
