@@ -17,7 +17,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <CursorManager>
         <>
           {/* <HomeLoader setLoader={setLoader} title="hey" /> */}
-          {/* <CustomCursor /> */}
+          <CustomCursor />
 
           {/* {!loader && ( */}
           {/* <> */}
@@ -31,15 +31,15 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <CursorManager>
       <>
-        <HomeLoader setLoader={setLoader} title="folio" />
+        {/* <HomeLoader setLoader={setLoader} title="folio" /> */}
         <CustomCursor />
 
-        {!loader && (
-          <>
-            <Header />
-            <Component {...pageProps} />
-          </>
-        )}
+        {/* {!loader && ( */}
+        <>
+          <Header />
+          <Component {...pageProps} />
+        </>
+        {/* )} */}
       </>
     </CursorManager>
   );

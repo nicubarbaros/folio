@@ -1,11 +1,13 @@
 import { NextSeo } from 'next-seo';
 import React, { useState } from 'react';
 import Footer from '../components/Footer';
+import HomeLoader from '../components/HomeLoader';
 import SubscribedAmount from '../components/Roadmap/SubscribedAmount';
 import SEO from '../components/Seo';
 
 export default function Roadmap() {
   const [email, setEmail] = useState('');
+  const [loader, setLoader] = useState(true);
 
   const [message, setMessage] = useState('');
 
@@ -34,15 +36,17 @@ export default function Roadmap() {
   };
   return (
     <>
-      {/* <SEO
+      <HomeLoader setLoader={setLoader} title="hey" />
+
+      <SEO
         title="Roadmap to becoming a Creative Developer"
         description="Level up your professional knowledge."
         type="website"
         url="https://nicubarbaros.com/roadmap"
         image="https://nicubarbaros.com/images/roadmap.png"
-      /> */}
+      />
 
-      <NextSeo
+      {/* <NextSeo
         title="Roadmap to becoming a Creative Developer"
         description="Level up your professional knowledge."
         canonical="https://nicubarbaros.com"
@@ -58,25 +62,33 @@ export default function Roadmap() {
           site: '@nicubarbaros',
           cardType: 'summary_large_image'
         }}
-      />
-      <div className="roadmap-container">
-        <h1 className="roadmap-title">Roadmap to becoming a Creative Developer</h1>
+      /> */}
+      {!loader && (
+        <div className="roadmap-container">
+          <h1 className="roadmap-title">Roadmap to becoming a Creative Developer</h1>
 
-        <div>
-          <p className="roadmap-paragraph">
-            Level up your professional knowledge. <br />
-            Join the waitlist to get early access.
-          </p>
+          <div>
+            <p className="roadmap-paragraph">
+              Level up your professional knowledge. <br />
+              Join the waitlist to get early access.
+            </p>
+          </div>
+          <form onSubmit={handleSubmit} className="roadmap-form">
+            <input
+              className="roadmap-input"
+              type="text"
+              value={email}
+              onChange={handleChange}
+              placeholder="Your email"
+            />
+            <input type="submit" className="roadmap-button" value="Subscribe" />
+          </form>
+
+          {message && <div>{message}</div>}
+
+          <SubscribedAmount />
         </div>
-        <form onSubmit={handleSubmit} className="roadmap-form">
-          <input className="roadmap-input" type="text" value={email} onChange={handleChange} placeholder="Your email" />
-          <input type="submit" className="roadmap-button" value="Subscribe" />
-        </form>
-
-        {message && <div>{message}</div>}
-
-        <SubscribedAmount />
-      </div>
+      )}
     </>
   );
 }
