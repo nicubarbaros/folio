@@ -1,3 +1,4 @@
+import { NextSeo } from 'next-seo';
 import React, { useState } from 'react';
 import Footer from '../components/Footer';
 import SubscribedAmount from '../components/Roadmap/SubscribedAmount';
@@ -33,12 +34,30 @@ export default function Roadmap() {
   };
   return (
     <>
-      <SEO
+      {/* <SEO
         title="Roadmap to becoming a Creative Developer"
         description="Level up your professional knowledge."
         type="website"
         url="https://nicubarbaros.com/roadmap"
         image="https://nicubarbaros.com/images/roadmap.png"
+      /> */}
+
+      <NextSeo
+        title="Roadmap to becoming a Creative Developer"
+        description="Level up your professional knowledge."
+        canonical="https://nicubarbaros.com"
+        openGraph={{
+          url: 'https://nicubarbaros.com/roadmap',
+          title: 'Roadmap to becoming a Creative Developer',
+          description: 'Level up your professional knowledge.',
+          images: [{ url: 'https://nicubarbaros.com/images/roadmap.png' }],
+          site_name: 'nicubarbaros'
+        }}
+        twitter={{
+          handle: '@handle',
+          site: '@nicubarbaros',
+          cardType: 'summary_large_image'
+        }}
       />
       <div className="roadmap-container">
         <h1 className="roadmap-title">Roadmap to becoming a Creative Developer</h1>
