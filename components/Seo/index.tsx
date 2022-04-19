@@ -14,18 +14,19 @@ type Props = {
 const socialTags = ({ type, url, title, description, image, createdAt }: Props) => {
   const metaTags = [
     { name: 'twitter:card', content: 'summary_large_image' },
-    {
-      name: 'twitter:site',
-      content: settings && settings.meta && settings.meta.social && settings.meta.social.twitter
-    },
     { name: 'twitter:title', content: title },
     { name: 'twitter:description', content: description },
+
+    { name: 'twitter:image', content: image },
     {
       name: 'twitter:creator',
       content: settings && settings.meta && settings.meta.social && settings.meta.social.twitter
     },
-    { name: 'twitter:image:src', content: image },
-    { name: 'twitter:card', content: 'summary_large_image' },
+    {
+      name: 'twitter:site',
+      content: settings && settings.meta && settings.meta.social && settings.meta.social.twitter
+    },
+
     { name: 'og:title', content: title },
     { name: 'og:type', content: type },
     { name: 'og:url', content: url },
