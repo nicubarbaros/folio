@@ -16,14 +16,14 @@ function MyApp({ Component, pageProps }: AppProps) {
     return (
       <CursorManager>
         <>
-          <HomeLoader setLoader={setLoader} title="hey" />
-          <CustomCursor />
+          {/* <HomeLoader setLoader={setLoader} title="hey" /> */}
+          {/* <CustomCursor /> */}
 
-          {!loader && (
-            <>
-              <Component {...pageProps} />
-            </>
-          )}
+          {/* {!loader && ( */}
+          {/* <> */}
+          <Component {...pageProps} />
+          {/* </> */}
+          {/* )} */}
         </>
       </CursorManager>
     );
