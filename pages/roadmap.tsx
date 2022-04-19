@@ -37,8 +37,8 @@ export default function Roadmap() {
         title="Roadmap to becoming a Creative Developer"
         description="Level up your professional knowledge."
         type="website"
-        url="https://nicubarbaros/roadmap"
-        image="/images/roadmap.png"
+        url="https://nicubarbaros.com/roadmap"
+        image="https://nicubarbaros.com/images/roadmap.png"
       />
       <div className="roadmap-container">
         <h1 className="roadmap-title">Roadmap to becoming a Creative Developer</h1>

@@ -62,6 +62,7 @@ const SEO = (props: Props) => {
       <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
       {/* <meta name="keywords" content="video streaming, the rock" /> */}
       <meta name="description" content={description} />
+      <meta property="og:locale" content="en_GB" />
       <meta itemProp="name" content={title} />
       <meta itemProp="description" content={description} />
       <meta itemProp="image" content={image} />
