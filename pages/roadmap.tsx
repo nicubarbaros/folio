@@ -3,6 +3,7 @@ import HomeLoader from '../components/HomeLoader';
 import SubscribedAmount from '../components/Roadmap/SubscribedAmount';
 import SEO from '../components/Seo';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import * as gtag from '../utils/gtag';
 
 export default function Roadmap() {
   const [email, setEmail] = useState('');
@@ -31,6 +32,13 @@ export default function Roadmap() {
       setMessage(error);
       return;
     }
+
+    gtag.event({
+      action: 'submit_form',
+      category: 'Roadmap',
+      label: 'email',
+      value: email
+    });
 
     setEmail('');
     setMessage('Thank you 💜. You are cool 🤘🏽');
