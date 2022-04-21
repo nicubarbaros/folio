@@ -37,6 +37,10 @@
       box-shadow: none;
 
       border: 1px solid #d8d8d8;
+      &:focus,
+      &:active {
+        border-color: #343434;
+      }
     }
 
     .roadmap-input,

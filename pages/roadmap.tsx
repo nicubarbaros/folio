@@ -1,15 +1,16 @@
-import { NextSeo } from 'next-seo';
 import React, { useState } from 'react';
-import Footer from '../components/Footer';
 import HomeLoader from '../components/HomeLoader';
 import SubscribedAmount from '../components/Roadmap/SubscribedAmount';
 import SEO from '../components/Seo';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export default function Roadmap() {
   const [email, setEmail] = useState('');
   const [loader, setLoader] = useState(true);
 
   const [message, setMessage] = useState('');
+
+  const [subscribed, setSubscribed] = useLocalStorage('subscribed', false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
@@ -32,7 +33,8 @@ export default function Roadmap() {
     }
 
     setEmail('');
-    setMessage('Success! 🎉 You are now subscribed to the newsletter.');
+    setMessage('Thank you 💜. You are cool 🤘🏽');
+    setSubscribed(true);
   };
   return (
     <>
@@ -46,23 +48,6 @@ export default function Roadmap() {
         image="https://nicubarbaros.com/images/roadmap.jpeg"
       />
 
-      {/* <NextSeo
-        title="Roadmap to becoming a Creative Developer"
-        description="Level up your professional knowledge."
-        canonical="https://nicubarbaros.com"
-        openGraph={{
-          url: 'https://nicubarbaros.com/roadmap',
-          title: 'Roadmap to becoming a Creative Developer',
-          description: 'Level up your professional knowledge.',
-          images: [{ url: 'https://nicubarbaros.com/images/roadmap.png' }],
-          site_name: 'nicubarbaros'
-        }}
-        twitter={{
-          handle: '@handle',
-          site: '@nicubarbaros',
-          cardType: 'summary_large_image'
-        }}
-      /> */}
       {!loader && (
         <div className="roadmap-container">
           <h1 className="roadmap-title">Roadmap to becoming a Creative Developer</h1>
@@ -79,9 +64,9 @@ export default function Roadmap() {
               type="text"
               value={email}
               onChange={handleChange}
-              placeholder="Your email"
+              placeholder="Notify me on release"
             />
-            <input type="submit" className="roadmap-button" value="Subscribe" />
+            <input type="submit" className="roadmap-button" value="Send" />
           </form>
 
           {message && <div>{message}</div>}
