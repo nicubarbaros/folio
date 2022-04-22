@@ -53,7 +53,7 @@ export default function Roadmap() {
         description="Level up your professional knowledge."
         type="website"
         url="https://nicubarbaros.com/roadmap"
-        image="https://nicubarbaros.com/images/roadmap.jpeg"
+        image="https://nicubarbaros.com/images/roadmap_new2.jpeg"
       />
 
       {!loader && (
