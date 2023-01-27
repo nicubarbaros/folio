@@ -65,6 +65,7 @@ export default function Work() {
             alt="Picture of the author"
             layout="fill"
             className={cn('work-slider-item', { active: activeIndex === index })}
+            priority
           />
         ))}
       </div>
