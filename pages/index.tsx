@@ -23,7 +23,7 @@ const Home: NextPage = () => {
           </div>
           <section className="section about-image">
             <div className="image">
-              <Image src={'/images/home2.jpeg'} objectFit="cover" layout="fill" />
+              <Image src={'/images/home2.jpeg'} objectFit="cover" layout="fill" priority />
               {/* <Image src={"/images/profile.jpeg"} objectFit="cover" layout="f	ill" /> */}
               {/* <Image src={"/images/home2.jpeg"} objectFit="cover" layout="fill" /> */}
             </div>
