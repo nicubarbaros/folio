@@ -34,8 +34,6 @@ export default function Work() {
     return () => intervalRef.current && clearInterval(intervalRef.current);
   }, []);
 
-  console.log(activeIndex);
-
   const handleOnMouseDown = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -51,28 +49,25 @@ export default function Work() {
     setIsPaused(false);
   };
 
-  console.log(intervalRef);
   return (
     <>
       <HomeLoader setLoader={setLoader} title="work" />
 
-      {!loader && (
-        <div
-          className={cn('work-slider-container', { 'is-paused': isPaused })}
-          onMouseDown={handleOnMouseDown}
-          onMouseUp={handleOnMouseUp}
-        >
-          {profilePic.map((pic, index) => (
-            <Image
-              key={index}
-              src={pic}
-              alt="Picture of the author"
-              layout="fill"
-              className={cn('work-slider-item', { active: activeIndex === index })}
-            />
-          ))}
-        </div>
-      )}
+      <div
+        className={cn('work-slider-container', { 'is-paused': isPaused })}
+        onMouseDown={handleOnMouseDown}
+        onMouseUp={handleOnMouseUp}
+      >
+        {profilePic.map((pic, index) => (
+          <Image
+            key={index}
+            src={pic}
+            alt="Picture of the author"
+            layout="fill"
+            className={cn('work-slider-item', { active: activeIndex === index })}
+          />
+        ))}
+      </div>
     </>
   );
 }
