@@ -6,12 +6,14 @@ import Footer from '../components/Footer';
 import AnimatedParagraph from '../components/AnimatedParagraph';
 import { useState } from 'react';
 import HomeLoader from '../components/HomeLoader';
+import CustomCursor from '../components/CustomCursor';
 
 const Home: NextPage = () => {
   const [loader, setLoader] = useState(true);
 
   return (
     <>
+      <CustomCursor />
       <HomeLoader setLoader={setLoader} title="folio" />
       {!loader && (
         <div className="home-container">

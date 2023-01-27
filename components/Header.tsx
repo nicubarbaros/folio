@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, Variants } from 'framer-motion';
+import Link from 'next/link';
 
 const variants: Variants = {
   initial: {
@@ -15,21 +16,13 @@ const variants: Variants = {
 };
 export default function Header() {
   return (
-    <div className="nav-bar">
-      <div className="nav-bar-left">
-        <motion.h6 variants={variants} initial="initial" animate="animate">
-          nicu barbaros
-        </motion.h6>
-        <motion.h6 variants={variants} initial="initial" animate="animate">
-          Currently Senior <br /> Software Engineer at Planable
-        </motion.h6>
-        <motion.h6 variants={variants} initial="initial" animate="animate">
-          Based in <br /> Chisinau Moldova
-        </motion.h6>
-      </div>
-      <motion.h6 className="nav-bar-right" variants={variants} initial="initial" animate="animate">
-        menu
-      </motion.h6>
-    </div>
+    <ul className="nav-bar">
+      <motion.li variants={variants} initial="initial" animate="animate">
+        <Link href="/">Home</Link>
+      </motion.li>
+      <motion.li variants={variants} initial="initial" animate="animate">
+        <Link href="/work">Work</Link>
+      </motion.li>
+    </ul>
   );
 }

@@ -30,27 +30,11 @@ body {
   width: 100vw;
 
   display: flex;
-  justify-content: space-between;
+  gap: 12px;
   padding: 50px;
 
-  line-height: 1.1;
-  font-weight: 400;
-  font-size: 0.83333vw;
-  text-transform: lowercase;
   line-height: 1em;
-
-  .nav-bar-left {
-    flex: 1;
-    display: flex;
-    justify-content: space-between;
-    text-align: center;
-  }
-
-  .nav-bar-right {
-    flex: 1;
-
-    text-align: right;
-  }
+  z-index: 1;
 }
 
 .home-loader-wrapper {

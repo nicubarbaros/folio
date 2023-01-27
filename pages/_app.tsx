@@ -32,7 +32,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     <CursorManager>
       <>
         {/* <HomeLoader setLoader={setLoader} title="folio" /> */}
-        <CustomCursor />
 
         {/* {!loader && ( */}
         <>

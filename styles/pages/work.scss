@@ -1,0 +1,18 @@
+.work-slider-container {
+  &:hover {
+    cursor: grab;
+  }
+
+  &.is-paused {
+    cursor: grabbing;
+  }
+
+  img {
+    object-fit: cover;
+    display: none !important;
+
+    &.active {
+      display: block !important;
+    }
+  }
+}
