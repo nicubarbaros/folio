@@ -12,6 +12,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   const { pathname } = router;
+  console.log(pathname);
+  if (pathname === '/free-tools') {
+    return <Component {...pageProps} />;
+  }
+
   if (pathname === '/roadmap') {
     return (
       <CursorManager>
