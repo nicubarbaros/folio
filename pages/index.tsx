@@ -1,50 +1,193 @@
 import type { NextPage } from 'next';
-import Image from 'next/image';
-import HomeCover from '../components/HomeCover';
-import ScrollIndicator from '../components/ScrollIndicator';
 import Footer from '../components/Footer';
-import AnimatedParagraph from '../components/AnimatedParagraph';
-import { useState } from 'react';
-import HomeLoader from '../components/HomeLoader';
-import CustomCursor from '../components/CustomCursor';
 
 const Home: NextPage = () => {
-  const [loader, setLoader] = useState(true);
-
   return (
-    <>
-      <CustomCursor />
-      <HomeLoader setLoader={setLoader} title="folio" />
-      {!loader && (
-        <div className="home-container">
-          <div className="home-hero">
-            <HomeCover />
-            <ScrollIndicator />
+    <div className="home">
+      <div className="home-inner">
+        <header className="home-intro">
+          <div className="home-eyebrow">
+            <span className="home-wave" role="img" aria-label="Waving hand">
+              👋
+            </span>
+            HELLO
           </div>
-          <section className="section about-image">
-            <div className="image">
-              <Image src={'/images/home2.jpeg'} objectFit="cover" layout="fill" priority />
-              {/* <Image src={"/images/profile.jpeg"} objectFit="cover" layout="f	ill" /> */}
-              {/* <Image src={"/images/home2.jpeg"} objectFit="cover" layout="fill" /> */}
+
+          <h1 className="home-title">
+            My name is Nicu, I’m a product builder making <em>micro SaaS</em> tools that do one job well.
+          </h1>
+
+          <div className="home-facts">
+            <div className="home-fact">
+              <span className="home-fact-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="7" width="18" height="13" rx="2" />
+                  <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  <path d="M3 12h18" />
+                </svg>
+              </span>
+              <div className="home-fact-body">
+                <span className="home-fact-label">Recent Experience</span>
+                <span className="home-fact-value">
+                  Building Partners and Okie, while full time job at Planable as product engineer.
+                </span>
+              </div>
             </div>
-          </section>
-          <section className="section about-text">
-            <AnimatedParagraph
-              paragraph="I’m a moldavian Front End developer, content creator on YouTube, help with Creative Front End development growth,
-      and appreciate polished web design pieces. I also bake in free time."
-            />
-          </section>
 
-          {/* <section className="section">
-                <h1>Projects</h1>
+            <div className="home-fact">
+              <span className="home-fact-icon">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+                  <circle cx="12" cy="10" r="2.5" />
+                </svg>
+              </span>
+              <div className="home-fact-body">
+                <span className="home-fact-label">Location</span>
+                <span className="home-fact-value">Chișinău, Moldova</span>
+              </div>
+            </div>
+          </div>
+        </header>
 
-                <p>Placeholder for some sort of webgl based images/sliders/grid</p>
-              </section> */}
+        <section className="home-work">
+          <div className="home-work-divider">
+            <span className="home-work-heading">Things I’m making</span>
+            <span className="home-work-rule" />
+            <span className="home-work-count">03</span>
+          </div>
 
-          <Footer />
-        </div>
-      )}
-    </>
+          <div className="home-project">
+            <div className="home-preview home-preview-okie">
+              <div className="home-mock home-mock-okie">
+                <div className="home-mock-okie-head">
+                  <span>
+                    Review <b>3</b> / <b>4</b>
+                  </span>
+                  <span className="home-mock-okie-severity">
+                    <span className="home-mock-okie-dot" />
+                    Critical
+                  </span>
+                </div>
+                <div className="home-mock-okie-title">Retry semantics changed</div>
+                <p className="home-mock-okie-body">
+                  The retry wraps the whole publish step, not only the upload, so a retry can re-run the Instagram
+                  publish call.
+                </p>
+                <div className="home-mock-okie-checklist">
+                  <div className="home-mock-okie-item">
+                    <span className="home-mock-okie-check">
+                      <svg
+                        width="9"
+                        height="9"
+                        viewBox="0 0 10 10"
+                        fill="none"
+                        stroke="#fff"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M2 5l2.2 2.2L8 3" />
+                      </svg>
+                    </span>
+                    <span className="home-mock-okie-done">Can retries create duplicate posts?</span>
+                  </div>
+                  <div className="home-mock-okie-item">
+                    <span className="home-mock-okie-box" />
+                    <span>Should retry wrap only the upload?</span>
+                  </div>
+                </div>
+                <div className="home-mock-okie-actions">
+                  <span className="home-mock-okie-ghost">Needs changes</span>
+                  <span className="home-mock-okie-primary">Looks good</span>
+                </div>
+              </div>
+            </div>
+            <p className="home-caption">
+              <strong>Okie</strong> <span className="home-caption-meta">· Coming soon</span>
+              <br />
+              Better PR reviews for GitHub. Cuts a 142-file PR down to the 4 changes that matter.
+            </p>
+          </div>
+
+          <a className="home-project" href="https://www.trypartners.app" target="_blank" rel="noopener noreferrer">
+            <div className="home-preview home-preview-partners">
+              <div className="home-mock home-mock-partners">
+                <div className="home-mock-partners-head">
+                  <span className="home-mock-partners-title">Dashboard</span>
+                  <span className="home-mock-partners-cta">New partner</span>
+                </div>
+                <div className="home-mock-partners-stats">
+                  <div className="home-mock-partners-tile">
+                    <div className="home-mock-partners-label">Total earned</div>
+                    <div className="home-mock-partners-value">$16,505</div>
+                  </div>
+                  <div className="home-mock-partners-tile">
+                    <div className="home-mock-partners-label">Outstanding</div>
+                    <div className="home-mock-partners-value">$22,995</div>
+                  </div>
+                  <div className="home-mock-partners-tile">
+                    <div className="home-mock-partners-label">Overdue</div>
+                    <div className="home-mock-partners-value is-overdue">$1,200</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="home-caption">
+              <strong>Partners</strong> <span className="home-caption-meta">· trypartners.app</span>
+              <br />
+              Track sponsorship payments and brand deals for creators. Never forget a payment again.
+            </p>
+          </a>
+
+          <a
+            className="home-project"
+            href="https://youtube.com/c/WebUnlocked"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="home-preview home-preview-web-unlocked">
+              <div className="home-mock home-mock-video">
+                <div className="home-mock-video-inner">
+                  <div className="home-mock-video-brand">Web Unlocked</div>
+                  <div className="home-mock-video-play">
+                    <span />
+                  </div>
+                  <div className="home-mock-video-duration">12:40</div>
+                </div>
+              </div>
+            </div>
+            <p className="home-caption">
+              <strong>Web Unlocked</strong> <span className="home-caption-meta">· YouTube</span>
+              <br />
+              Tutorials on creative web development.
+            </p>
+          </a>
+        </section>
+
+        <Footer />
+      </div>
+    </div>
   );
 };
 

@@ -40,7 +40,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
         {/* {!loader && ( */}
         <>
-          <Header />
+          {/* the home redesign is a single column with no nav, the fixed bar overlaps its intro */}
+          {pathname !== '/' && <Header />}
           <Component {...pageProps} />
         </>
         {/* )} */}
