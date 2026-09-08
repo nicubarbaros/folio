@@ -1,3 +1,27 @@
+@use 'sass:math';
+
+// The mock cards are drawn at a fixed design size and scale down with their
+// preview block instead of being clipped on narrow viewports. Every length
+// inside a scaled card is em, against that card's own base font size.
+$mock-base: 12;
+
+// The cards are rotated, which makes their bounding box wider and taller than
+// their layout box, so they stop short of the full container width to leave
+// their corners room.
+$mock-fit: 0.94;
+
+@function em($px, $base: $mock-base) {
+  @return math.div($px, $base) * 1em;
+}
+
+// Below its design width the card is sized by the block, above it the card
+// keeps its design size.
+@mixin mock-scale($design-width) {
+  $ratio: math.div($design-width, $mock-base);
+  width: #{$ratio}em;
+  font-size: min(#{$mock-base}px, #{math.div(100 * $mock-fit, $ratio)}cqw);
+}
+
 $home-bg: #171717;
 $home-text: #dfd3c3;
 $home-strong: #fff;
@@ -162,8 +186,11 @@ $home-overdue: #c62828;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: clamp(20px, 5%, 48px);
+    // percentage padding keeps the inner box proportional to the block at every
+    // width, so scaling a card by width alone also makes it fit vertically
+    padding: 5%;
     overflow: hidden;
+    container-type: size;
   }
 
   .home-preview-okie {
@@ -179,21 +206,19 @@ $home-overdue: #c62828;
   }
 
   .home-mock {
-    width: 100%;
     background-color: #fff;
     color: $home-bg;
-    font-size: 12px;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
     transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .home-mock-okie {
-    max-width: 440px;
-    border-radius: 12px;
-    padding: 20px;
+    @include mock-scale(440);
+    border-radius: em(12);
+    padding: em(20);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: em(12);
     transform: rotate(-2.5deg);
   }
 
@@ -202,7 +227,7 @@ $home-overdue: #c62828;
     justify-content: space-between;
     align-items: center;
     color: #8a8580;
-    font-size: 11px;
+    font-size: em(11);
 
     b {
       color: $home-bg;
@@ -213,18 +238,18 @@ $home-overdue: #c62828;
   .home-mock-okie-severity {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: em(6, 11);
   }
 
   .home-mock-okie-dot {
-    width: 7px;
-    height: 7px;
+    width: em(7, 11);
+    height: em(7, 11);
     border-radius: 50%;
     background-color: #e02424;
   }
 
   .home-mock-okie-title {
-    font-size: 16px;
+    font-size: em(16);
     font-weight: 600;
     letter-spacing: -0.01em;
   }
@@ -238,24 +263,29 @@ $home-overdue: #c62828;
   .home-mock-okie-checklist {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: em(8);
   }
 
   .home-mock-okie-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: em(8);
   }
 
   .home-mock-okie-check {
-    width: 14px;
-    height: 14px;
+    width: em(14);
+    height: em(14);
     flex-shrink: 0;
-    border-radius: 4px;
+    border-radius: em(4);
     background-color: $home-okie-cta;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    svg {
+      width: em(9);
+      height: em(9);
+    }
   }
 
   .home-mock-okie-done {
@@ -264,41 +294,41 @@ $home-overdue: #c62828;
   }
 
   .home-mock-okie-box {
-    width: 14px;
-    height: 14px;
+    width: em(14);
+    height: em(14);
     flex-shrink: 0;
-    border-radius: 4px;
-    border: 1.5px solid #c9c5bf;
+    border-radius: em(4);
+    border: em(1.5) solid #c9c5bf;
   }
 
   .home-mock-okie-actions {
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
-    margin-top: 6px;
-    font-size: 11px;
+    gap: em(8);
+    margin-top: em(6);
+    font-size: em(11);
   }
 
   .home-mock-okie-ghost {
-    padding: 6px 12px;
-    border-radius: 7px;
-    border: 1px solid #e6e4df;
+    padding: em(6, 11) em(12, 11);
+    border-radius: em(7, 11);
+    border: em(1, 11) solid #e6e4df;
   }
 
   .home-mock-okie-primary {
-    padding: 6px 12px;
-    border-radius: 7px;
+    padding: em(6, 11) em(12, 11);
+    border-radius: em(7, 11);
     background-color: $home-okie-cta;
     color: #fff;
   }
 
   .home-mock-partners {
-    max-width: 520px;
-    border-radius: 10px;
-    padding: 20px;
+    @include mock-scale(520);
+    border-radius: em(10);
+    padding: em(20);
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: em(14);
     transform: rotate(2deg);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
   }
@@ -311,36 +341,36 @@ $home-overdue: #c62828;
 
   .home-mock-partners-title {
     font-weight: 600;
-    font-size: 13px;
+    font-size: em(13);
   }
 
   .home-mock-partners-cta {
-    padding: 4px 10px;
-    border-radius: 6px;
+    font-size: em(11);
+    padding: em(4, 11) em(10, 11);
+    border-radius: em(6, 11);
     background-color: $home-bg;
     color: #fff;
-    font-size: 11px;
   }
 
   .home-mock-partners-stats {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
+    gap: em(8);
   }
 
   .home-mock-partners-tile {
-    padding: 10px;
-    border-radius: 8px;
+    padding: em(10);
+    border-radius: em(8);
     background-color: #f5f4f1;
   }
 
   .home-mock-partners-label {
-    font-size: 10px;
+    font-size: em(10);
     color: #8a8580;
   }
 
   .home-mock-partners-value {
-    font-size: 18px;
+    font-size: em(18);
     font-weight: 600;
 
     &.is-overdue {
@@ -350,6 +380,7 @@ $home-overdue: #c62828;
 
   .home-mock-video {
     position: relative;
+    width: $mock-fit * 100%;
     max-width: 520px;
     aspect-ratio: 16/9;
     border-radius: 10px;
