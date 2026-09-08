@@ -5,21 +5,19 @@
 // inside a scaled card is em, against that card's own base font size.
 $mock-base: 12;
 
-// The cards are rotated, which makes their bounding box wider and taller than
-// their layout box, so they stop short of the full container width to leave
-// their corners room.
-$mock-fit: 0.94;
+// The card spans this share of the tile until it reaches its design width.
+$mock-width: 0.8;
 
 @function em($px, $base: $mock-base) {
   @return math.div($px, $base) * 1em;
 }
 
-// Below its design width the card is sized by the block, above it the card
-// keeps its design size.
+// Below its design width the card is sized by the tile, above it the card keeps
+// its design size.
 @mixin mock-scale($design-width) {
   $ratio: math.div($design-width, $mock-base);
   width: #{$ratio}em;
-  font-size: min(#{$mock-base}px, #{math.div(100 * $mock-fit, $ratio)}cqw);
+  font-size: min(#{$mock-base}px, #{math.div(100 * $mock-width, $ratio)}cqw);
 }
 
 $home-bg: #171717;
@@ -174,42 +172,93 @@ $home-overdue: #c62828;
     display: flex;
     flex-direction: column;
     gap: 18px;
-
-    &:hover .home-mock {
-      transform: rotate(0deg) scale(1.02);
-    }
   }
 
   .home-preview {
+    position: relative;
     aspect-ratio: 16/10;
     border-radius: 14px;
+    overflow: hidden;
+    container-type: inline-size;
+    cursor: pointer;
+  }
+
+  .home-tile-word {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    // percentage padding keeps the inner box proportional to the block at every
-    // width, so scaling a card by width alone also makes it fit vertically
-    padding: 5%;
-    overflow: hidden;
-    container-type: size;
+    font-family: 'Merriweather', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    pointer-events: none;
+
+    span {
+      display: inline-block;
+    }
+  }
+
+  .home-tile-word-space {
+    width: 0.25em;
+  }
+
+  .home-tile-pill {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    pointer-events: none;
   }
 
   .home-preview-okie {
     background-color: $home-okie;
+
+    .home-tile-word {
+      font-size: 34cqw;
+      color: $home-strong;
+    }
   }
 
   .home-preview-partners {
     background-color: $home-partners;
+
+    .home-tile-word {
+      font-size: 22cqw;
+      color: $home-bg;
+    }
   }
 
   .home-preview-web-unlocked {
     background-color: $home-web-unlocked;
+
+    .home-tile-word {
+      font-size: 15cqw;
+      color: $home-strong;
+    }
   }
 
+  // The rest state lives here as well as in the hook so the card cannot flash
+  // into view before the animation wires up.
   .home-mock {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    opacity: 0;
+    transform: translateY(60%) rotate(-8deg);
     background-color: #fff;
     color: $home-bg;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
-    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   .home-mock-okie {
@@ -219,7 +268,6 @@ $home-overdue: #c62828;
     display: flex;
     flex-direction: column;
     gap: em(12);
-    transform: rotate(-2.5deg);
   }
 
   .home-mock-okie-head {
@@ -323,13 +371,12 @@ $home-overdue: #c62828;
   }
 
   .home-mock-partners {
-    @include mock-scale(520);
+    @include mock-scale(440);
     border-radius: em(10);
     padding: em(20);
     display: flex;
     flex-direction: column;
     gap: em(14);
-    transform: rotate(2deg);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
   }
 
@@ -379,13 +426,10 @@ $home-overdue: #c62828;
   }
 
   .home-mock-video {
-    position: relative;
-    width: $mock-fit * 100%;
-    max-width: 520px;
+    @include mock-scale(440);
     aspect-ratio: 16/9;
-    border-radius: 10px;
+    border-radius: em(12);
     background: linear-gradient(135deg, #1c1c1c, #2e2a26);
-    transform: rotate(-1.5deg);
   }
 
   .home-mock-video-inner {
@@ -395,21 +439,22 @@ $home-overdue: #c62828;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    border-radius: em(12);
   }
 
   .home-mock-video-brand {
     position: absolute;
-    left: 16px;
-    top: 14px;
+    left: em(16);
+    top: em(14);
     font-family: 'Merriweather', Georgia, serif;
-    font-size: 14px;
+    font-size: em(14);
     color: $home-text;
   }
 
   .home-mock-video-play {
-    width: 56px;
-    height: 38px;
-    border-radius: 10px;
+    width: em(56);
+    height: em(38);
+    border-radius: em(10);
     background-color: #fff;
     display: flex;
     align-items: center;
@@ -418,22 +463,22 @@ $home-overdue: #c62828;
     span {
       width: 0;
       height: 0;
-      border-left: 14px solid $home-bg;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      margin-left: 3px;
+      border-left: em(14) solid $home-bg;
+      border-top: em(8) solid transparent;
+      border-bottom: em(8) solid transparent;
+      margin-left: em(3);
     }
   }
 
   .home-mock-video-duration {
     position: absolute;
-    right: 12px;
-    bottom: 12px;
-    padding: 2px 6px;
-    border-radius: 4px;
+    right: em(12);
+    bottom: em(12);
+    padding: em(2, 11) em(6, 11);
+    border-radius: em(4, 11);
     background-color: rgba(0, 0, 0, 0.75);
     color: #fff;
-    font-size: 11px;
+    font-size: em(11);
   }
 
   .home-caption {
@@ -502,6 +547,11 @@ $home-overdue: #c62828;
   }
 
   .home .home-mock {
-    transition: none;
+    opacity: 1;
+    transform: translateY(-50%) rotate(-2.5deg);
+  }
+
+  .home .home-tile-word {
+    display: none;
   }
 }
