@@ -1,25 +1,25 @@
 import React from 'react';
 
+const links = [
+  { label: 'X', href: 'https://x.com/nicubarbaros' },
+  { label: 'YouTube', href: 'https://youtube.com/c/WebUnlocked' },
+  { label: 'GitHub', href: 'https://github.com/nicubarbaros' }
+];
+
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="footer">
-      <h6>Nicu Barbaros</h6>
+    <footer className="home-footer">
+      <span>© {year} Nicu Barbaros</span>
 
-      <div>
-        <a href="https://twitter.com/nicubarbaros" target="_blank" rel="noopener noreferrer">
-          Twitter
-        </a>
-        <a href="https://youtube.com/c/WebUnlocked" target="_blank" rel="noopener noreferrer">
-          YouTube
-        </a>
-        <a href="https://github.com/nicubarbaros" target="_blank" rel="noopener noreferrer">
-          Github
-        </a>
+      <div className="home-footer-links">
+        {links.map(link => (
+          <a key={link.label} className="home-footer-link" href={link.href} target="_blank" rel="noopener noreferrer">
+            {link.label}
+          </a>
+        ))}
       </div>
-
-      <h6>({year}), all rights reserved</h6>
     </footer>
   );
 }
