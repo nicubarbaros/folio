@@ -1,7 +1,28 @@
 import type { NextPage } from 'next';
 import Footer from '../components/Footer';
+import { useAnimatedTiles } from '../hooks/useAnimatedTiles';
+
+// Each letter animates on its own, so the wordmark is split into spans. The
+// caption already names the project, so screen readers skip this.
+function Wordmark({ text }: { text: string }) {
+  return (
+    <div className="home-tile-word" aria-hidden="true">
+      {text
+        .split('')
+        .map((character, index) =>
+          character === ' ' ? (
+            <span key={index} className="home-tile-word-space" />
+          ) : (
+            <span key={index}>{character}</span>
+          )
+        )}
+    </div>
+  );
+}
 
 const Home: NextPage = () => {
+  useAnimatedTiles();
+
   return (
     <div className="home">
       <div className="home-inner">
@@ -77,7 +98,9 @@ const Home: NextPage = () => {
           </div>
 
           <div className="home-project">
-            <div className="home-preview home-preview-okie">
+            <div className="home-preview home-preview-okie" data-tile="okie">
+              <Wordmark text="Okie" />
+              <div className="home-tile-pill">COMING SOON</div>
               <div className="home-mock home-mock-okie">
                 <div className="home-mock-okie-head">
                   <span>
@@ -124,14 +147,15 @@ const Home: NextPage = () => {
               </div>
             </div>
             <p className="home-caption">
-              <strong>Okie</strong> <span className="home-caption-meta">· Coming soon</span>
+              <strong>Okie</strong>
               <br />
               Better PR reviews for GitHub. Cuts a 142-file PR down to the 4 changes that matter.
             </p>
           </div>
 
           <a className="home-project" href="https://www.trypartners.app" target="_blank" rel="noopener noreferrer">
-            <div className="home-preview home-preview-partners">
+            <div className="home-preview home-preview-partners" data-tile="partners">
+              <Wordmark text="Partners" />
               <div className="home-mock home-mock-partners">
                 <div className="home-mock-partners-head">
                   <span className="home-mock-partners-title">Dashboard</span>
@@ -166,7 +190,8 @@ const Home: NextPage = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <div className="home-preview home-preview-web-unlocked">
+            <div className="home-preview home-preview-web-unlocked" data-tile="web-unlocked">
+              <Wordmark text="Web Unlocked" />
               <div className="home-mock home-mock-video">
                 <div className="home-mock-video-inner">
                   <div className="home-mock-video-brand">Web Unlocked</div>
