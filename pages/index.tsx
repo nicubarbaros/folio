@@ -100,7 +100,6 @@ const Home: NextPage = () => {
           <div className="home-project">
             <div className="home-preview home-preview-okie" data-tile="okie">
               <Wordmark text="Okie" />
-              <div className="home-tile-pill">COMING SOON</div>
               <div className="home-mock home-mock-okie">
                 <div className="home-mock-okie-head">
                   <span>

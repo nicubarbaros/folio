@@ -206,19 +206,6 @@ $home-overdue: #c62828;
     width: 0.25em;
   }
 
-  .home-tile-pill {
-    position: absolute;
-    left: 14px;
-    bottom: 14px;
-    padding: 5px 10px;
-    border-radius: 999px;
-    background-color: rgba(255, 255, 255, 0.16);
-    color: #fff;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    pointer-events: none;
-  }
-
   .home-preview-okie {
     background-color: $home-okie;
 
