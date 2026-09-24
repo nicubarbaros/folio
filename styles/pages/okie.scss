@@ -1,0 +1,1135 @@
+@use 'sass:math';
+
+$okie-bg: #171717;
+$okie-text: #dfd3c3;
+$okie-strong: #fff;
+$okie-muted: #a89d8e;
+$okie-faint: #8a8177;
+$okie-rule: #2d2b28;
+$okie-chip: #242220;
+$okie-border: #3a352e;
+$okie-blue: #2b4bd6;
+$okie-blue-hover: #3a5ae0;
+
+// App chrome, the light surface inside the product shot and the step mocks.
+$ui-ink: #0a0a0a;
+$ui-line: #e5e5e5;
+$ui-line-soft: #f0f0f0;
+$ui-surface: #fafafa;
+$ui-fill: #f5f5f5;
+$ui-muted: #737373;
+$ui-body: #525252;
+$ui-faint: #a3a3a3;
+$ui-critical: #e7000b;
+$ui-high: #f54900;
+$ui-warn: #d08700;
+$ui-ok: #00a63e;
+
+$mono: 'JetBrains Mono', ui-monospace, monospace;
+
+// The product shot is a picture of a 1040px-wide desktop app, so everything
+// inside the window is em against this base and the base is driven by the
+// frame's width. The window then shrinks as a miniature, the way a real
+// screenshot would, instead of reflowing into something that is not the app.
+$shot-base: 12;
+$shot-width: 952; // the 1040px frame at its design size, less its 44px padding
+
+@function shot-em($px, $base: $shot-base) {
+  @return math.div($px, $base) * 1em;
+}
+
+.okie {
+  min-height: 100vh;
+  background-color: $okie-bg;
+  color: $okie-text;
+  font-family:
+    'Poppins',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  padding: clamp(40px, 8vw, 120px) clamp(20px, 6vw, 80px) 120px;
+  // reset.css sets line-height:1 on body, the design is drawn against the default
+  line-height: normal;
+  // the product shot is wider than the column and sized off 100vw, which counts
+  // the scrollbar, so clip rather than let the page scroll sideways
+  overflow-x: hidden;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .okie-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+  }
+
+  .okie-mono {
+    font-family: $mono;
+  }
+
+  .okie-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .okie-add {
+    color: $ui-ok;
+  }
+
+  .okie-del {
+    color: $ui-critical;
+  }
+
+  .okie-eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    color: $okie-faint;
+  }
+
+  // Intro
+
+  .okie-intro {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .okie-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .okie-brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background-color: $okie-blue;
+    color: $okie-strong;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Merriweather', Georgia, serif;
+    font-style: italic;
+    font-size: 30px;
+    line-height: 1;
+    padding-right: 3px;
+  }
+
+  .okie-brand-name {
+    font-family: 'Merriweather', Georgia, serif;
+    font-style: italic;
+    font-size: 34px;
+    color: $okie-strong;
+    letter-spacing: -0.03em;
+  }
+
+  .okie-title {
+    margin: 0;
+    font-weight: 400;
+    font-size: clamp(38px, 5.6vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-wrap: pretty;
+
+    em {
+      font-family: 'Merriweather', Georgia, serif;
+      font-style: italic;
+      color: $okie-strong;
+    }
+  }
+
+  .okie-lede {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.55;
+    color: $okie-muted;
+    max-width: 600px;
+    text-wrap: pretty;
+  }
+
+  .okie-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .okie-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .okie-cta-primary {
+    padding: 13px 20px;
+    background-color: $okie-blue;
+    color: $okie-strong;
+
+    &:hover {
+      background-color: $okie-blue-hover;
+      color: $okie-strong;
+    }
+  }
+
+  .okie-cta-invert {
+    position: relative;
+    padding: 14px 22px;
+    background-color: $okie-strong;
+    color: $okie-blue;
+
+    &:hover {
+      background-color: #eef1fc;
+      color: $okie-blue;
+    }
+  }
+
+  .okie-cta-ghost {
+    padding: 13px 18px;
+    border: 1px solid $okie-border;
+    font-weight: 400;
+    color: $okie-text;
+
+    &:hover {
+      border-color: $okie-text;
+      color: $okie-strong;
+    }
+  }
+
+  // Product shot
+
+  .okie-shot {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: min(1040px, calc(100vw - 2 * clamp(20px, 6vw, 80px)));
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .okie-shot-frame {
+    position: relative;
+    border-radius: 14px;
+    background-color: $okie-blue;
+    padding: clamp(20px, 5%, 44px) clamp(20px, 5%, 44px) 0;
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  .okie-shot-watermark {
+    position: absolute;
+    right: -2%;
+    top: -14%;
+    font-family: 'Merriweather', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(120px, 32vw, 260px);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.3);
+    letter-spacing: -0.04em;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .okie-window {
+    position: relative;
+    font-size: min(#{$shot-base}px, #{math.div(100 * $shot-base, $shot-width)}cqw);
+    border-radius: shot-em(12) shot-em(12) 0 0;
+    background-color: $okie-strong;
+    color: $ui-ink;
+    border: 1px solid $ui-line;
+    border-bottom: 0;
+    box-shadow: 0 shot-em(30) shot-em(80) rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+  }
+
+  .okie-window-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: shot-em(10) shot-em(14);
+    border-bottom: 1px solid $ui-line;
+    background-color: $ui-surface;
+  }
+
+  .okie-window-lights {
+    display: flex;
+    gap: shot-em(6);
+
+    span {
+      width: shot-em(10);
+      height: shot-em(10);
+      border-radius: 50%;
+
+      &:nth-child(1) {
+        background-color: #ff5f57;
+      }
+      &:nth-child(2) {
+        background-color: #febc2e;
+      }
+      &:nth-child(3) {
+        background-color: #28c840;
+      }
+    }
+  }
+
+  .okie-window-slash {
+    color: $ui-faint;
+  }
+
+  .okie-window-sync {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: shot-em(6);
+    color: $ui-muted;
+  }
+
+  .okie-dot-live {
+    width: shot-em(6);
+    height: shot-em(6);
+    border-radius: 50%;
+    background-color: $ui-ok;
+    flex-shrink: 0;
+  }
+
+  .okie-window-body {
+    display: grid;
+    grid-template-columns: minmax(0, shot-em(150)) minmax(0, 1fr);
+  }
+
+  .okie-sidebar {
+    border-right: 1px solid $ui-line;
+    padding: shot-em(10) shot-em(6);
+    display: flex;
+    flex-direction: column;
+    gap: shot-em(2);
+    font-size: shot-em(11);
+  }
+
+  .okie-sidebar-heading {
+    display: flex;
+    justify-content: space-between;
+    padding: shot-em(6, 9) shot-em(8, 9) shot-em(4, 9);
+    font-size: shot-em(9, 11);
+    letter-spacing: 0.08em;
+    color: $ui-muted;
+  }
+
+  .okie-sidebar-row {
+    display: flex;
+    justify-content: space-between;
+    padding: shot-em(6, 11) shot-em(8, 11);
+    border-radius: shot-em(6, 11);
+
+    &.is-active {
+      background-color: $ui-fill;
+    }
+
+    .okie-mono {
+      color: $ui-muted;
+    }
+  }
+
+  .okie-review {
+    padding: shot-em(16) shot-em(18);
+    display: flex;
+    flex-direction: column;
+    gap: shot-em(12);
+    min-width: 0;
+  }
+
+  .okie-review-back {
+    color: $ui-muted;
+    font-size: shot-em(11);
+  }
+
+  .okie-review-badges {
+    display: flex;
+    align-items: center;
+    gap: shot-em(8);
+    flex-wrap: wrap;
+  }
+
+  .okie-badge-critical {
+    padding: shot-em(3, 11) shot-em(8, 11);
+    border-radius: 999px;
+    background-color: #fde8e8;
+    color: $ui-critical;
+    font-size: shot-em(11);
+    font-weight: 500;
+  }
+
+  .okie-review-ref {
+    color: $ui-muted;
+    font-size: shot-em(11);
+  }
+
+  .okie-review-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: shot-em(12);
+  }
+
+  .okie-review-title {
+    font-size: shot-em(18);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .okie-review-start {
+    padding: shot-em(7, 11) shot-em(11, 11);
+    border-radius: shot-em(7, 11);
+    background-color: $okie-blue;
+    color: $okie-strong;
+    font-size: shot-em(11);
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .okie-review-meta {
+    font-size: shot-em(11);
+    color: $ui-muted;
+  }
+
+  .okie-tabs {
+    display: flex;
+    gap: shot-em(14);
+    border-bottom: 1px solid $ui-line;
+    font-size: shot-em(12);
+
+    span {
+      color: $ui-muted;
+      padding-bottom: shot-em(6);
+    }
+
+    .is-active {
+      color: inherit;
+      font-weight: 500;
+      border-bottom: 2px solid $ui-ink;
+    }
+  }
+
+  .okie-review-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: shot-em(12);
+    align-items: start;
+  }
+
+  .okie-review-col {
+    display: flex;
+    flex-direction: column;
+    gap: shot-em(12);
+    min-width: 0;
+  }
+
+  .okie-card {
+    border-radius: shot-em(9);
+    border: 1px solid $ui-line;
+    padding: shot-em(12) shot-em(14);
+    display: flex;
+    flex-direction: column;
+    gap: shot-em(10);
+  }
+
+  .okie-card-tight {
+    gap: shot-em(2);
+  }
+
+  .okie-card-small {
+    padding: shot-em(12);
+    gap: shot-em(6);
+    font-size: shot-em(11);
+  }
+
+  .okie-card-block {
+    display: flex;
+    flex-direction: column;
+    gap: shot-em(4);
+  }
+
+  .okie-card-block-split {
+    border-top: 1px solid $ui-line-soft;
+    padding-top: shot-em(10);
+  }
+
+  .okie-card-title {
+    font-weight: 600;
+  }
+
+  .okie-card-title-flow {
+    font-size: shot-em(12, 11);
+    margin-bottom: shot-em(2, 11);
+  }
+
+  .okie-card-body {
+    color: $ui-body;
+    line-height: 1.5;
+  }
+
+  .okie-card-note {
+    color: $ui-muted;
+    line-height: 1.5;
+  }
+
+  .okie-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .okie-card-count {
+    font-size: shot-em(11);
+    color: $ui-muted;
+  }
+
+  .okie-change {
+    display: flex;
+    gap: shot-em(10);
+    padding: shot-em(8) 0;
+    border-top: 1px solid $ui-line-soft;
+  }
+
+  .okie-change-dot {
+    width: shot-em(6);
+    height: shot-em(6);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: shot-em(5);
+
+    &.is-critical {
+      background-color: $ui-critical;
+    }
+
+    &.is-changed {
+      background-color: $ui-warn;
+    }
+  }
+
+  .okie-change-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: shot-em(2);
+  }
+
+  .okie-change-label {
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .okie-change-desc {
+    color: $ui-muted;
+    font-size: shot-em(11);
+    line-height: 1.45;
+  }
+
+  .okie-change-files {
+    color: $ui-muted;
+    font-size: shot-em(11);
+    white-space: nowrap;
+  }
+
+  .okie-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: shot-em(6, 11);
+
+    span {
+      padding: shot-em(3, 11) shot-em(8, 11);
+      border-radius: 999px;
+      background-color: $ui-fill;
+    }
+  }
+
+  // Flow steps, shared by the product shot and the Brief step mock
+
+  .okie-flow-step {
+    display: flex;
+    justify-content: space-between;
+    gap: shot-em(8, 11);
+    padding: shot-em(8, 11) shot-em(10, 11);
+    border-radius: shot-em(8, 11);
+    border: 1px solid $ui-line;
+    line-height: 1.4;
+
+    &.is-critical {
+      border-color: $ui-critical;
+    }
+
+    &.is-changed {
+      border-color: $ui-warn;
+    }
+  }
+
+  .okie-flow-tag {
+    font-size: shot-em(10, 11);
+    white-space: nowrap;
+
+    .is-critical & {
+      color: $ui-critical;
+    }
+
+    .is-changed & {
+      color: $ui-warn;
+    }
+  }
+
+  .okie-flow-arrow {
+    text-align: center;
+    color: #b3b3b3;
+    font-size: shot-em(10, 11);
+    line-height: 1;
+  }
+
+  .okie-shot-caption {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: $okie-faint;
+    text-wrap: pretty;
+  }
+
+  // Problem
+
+  .okie-problem {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 24px;
+    border-top: 1px solid $okie-rule;
+  }
+
+  .okie-problem-text {
+    margin: 0;
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.35;
+    color: $okie-text;
+    text-wrap: pretty;
+
+    span {
+      color: $okie-strong;
+    }
+  }
+
+  // How a review works
+
+  .okie-how {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .okie-divider {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+
+  .okie-divider-title {
+    font-family: 'Merriweather', Georgia, serif;
+    font-style: italic;
+    font-size: 28px;
+    color: $okie-strong;
+  }
+
+  .okie-divider-rule {
+    flex: 1;
+    height: 1px;
+    background-color: $okie-rule;
+  }
+
+  .okie-divider-count {
+    font-size: 13px;
+    color: $okie-faint;
+  }
+
+  .okie-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .okie-step {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .okie-mock {
+    border-radius: 12px;
+    background-color: $okie-strong;
+    color: $ui-ink;
+    border: 1px solid $ui-line;
+    padding: 18px;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 12px;
+    overflow: hidden;
+
+    // inside a step mock the flow steps are at the mock's own scale
+    .okie-flow-step {
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background-color: $okie-strong;
+      font-size: 12px;
+    }
+
+    .okie-flow-step.is-critical,
+    .okie-flow-step.is-changed {
+      background-color: $ui-surface;
+    }
+
+    .okie-flow-tag {
+      font-size: 11px;
+    }
+
+    .okie-flow-arrow {
+      font-size: 11px;
+      margin: -4px 0;
+      color: $ui-faint;
+    }
+  }
+
+  .okie-mock-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: $ui-muted;
+  }
+
+  .okie-mock-head-plain {
+    font-size: 11px;
+    letter-spacing: normal;
+
+    strong {
+      color: $ui-ink;
+      font-weight: inherit;
+    }
+  }
+
+  .okie-mock-attention {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    .okie-dot-live {
+      width: 6px;
+      height: 6px;
+    }
+  }
+
+  .okie-mock-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: $ui-muted;
+  }
+
+  .okie-mock-title {
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .okie-mock-title-lg {
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+
+  .okie-mock-meta {
+    color: $ui-muted;
+    font-size: 11px;
+  }
+
+  // in the step mock the underline hangs off the container's own padding, so
+  // only the active tab carries the padding that the product shot puts on both
+  .okie-tabs-mock {
+    padding-bottom: 6px;
+
+    span {
+      padding-bottom: 0;
+    }
+
+    .is-active {
+      margin-bottom: -7px;
+      padding-bottom: 6px;
+    }
+  }
+
+  .okie-inbox-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 7px;
+
+    &.is-active {
+      background-color: $ui-fill;
+    }
+  }
+
+  .okie-inbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .okie-inbox-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &.is-critical {
+      background-color: $ui-critical;
+    }
+    &.is-high {
+      background-color: $ui-high;
+    }
+    &.is-medium {
+      background-color: $ui-warn;
+    }
+    &.is-routine {
+      background-color: $ui-ok;
+    }
+  }
+
+  .okie-inbox-id {
+    color: $ui-muted;
+    font-size: 11px;
+  }
+
+  .okie-inbox-meta {
+    color: $ui-muted;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .okie-questions {
+    border-radius: 8px;
+    border: 1px solid $ui-line;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .okie-questions-label {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: $ui-muted;
+  }
+
+  .okie-question {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+
+  .okie-checkbox {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    border: 1.5px solid #c9c9c9;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .okie-file {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    background-color: $ui-surface;
+    border: 1px solid $ui-line;
+    font-family: $mono;
+    font-size: 11px;
+
+    .okie-truncate {
+      min-width: 0;
+    }
+  }
+
+  .okie-file-dir {
+    color: $ui-muted;
+  }
+
+  .okie-file-stat {
+    white-space: nowrap;
+  }
+
+  .okie-mock-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .okie-action-skip {
+    color: $ui-muted;
+    padding: 6px 8px;
+  }
+
+  .okie-action-ghost {
+    padding: 6px 11px;
+    border-radius: 7px;
+    border: 1px solid $ui-line;
+  }
+
+  .okie-action-primary {
+    padding: 6px 11px;
+    border-radius: 7px;
+    background-color: $okie-blue;
+    color: $okie-strong;
+  }
+
+  .okie-action-pill {
+    padding: 6px 11px;
+    border-radius: 999px;
+    border: 1px solid $ui-line;
+  }
+
+  .okie-action-pill-primary {
+    padding: 6px 11px;
+    border-radius: 999px;
+    background-color: $okie-blue;
+    color: $okie-strong;
+  }
+
+  .okie-summary {
+    display: flex;
+    flex-direction: column;
+    margin-top: 4px;
+  }
+
+  .okie-summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 0;
+    border-top: 1px solid $ui-line-soft;
+  }
+
+  .okie-summary-label {
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .okie-tick {
+    color: $ui-ok;
+  }
+
+  .okie-summary-verdict {
+    color: $ui-ok;
+    white-space: nowrap;
+    font-size: 11px;
+  }
+
+  .okie-step-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.55;
+      color: $okie-muted;
+    }
+  }
+
+  .okie-step-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: $okie-strong;
+  }
+
+  .okie-step-number {
+    font-family: 'Merriweather', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    color: $okie-faint;
+    margin-right: 8px;
+  }
+
+  // Local and private
+
+  .okie-local {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    padding-top: 24px;
+    border-top: 1px solid $okie-rule;
+  }
+
+  .okie-local-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    p {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.55;
+      color: $okie-text;
+      text-wrap: pretty;
+    }
+  }
+
+  // Who it's for
+
+  .okie-for {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .okie-for-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .okie-for-card {
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid $okie-rule;
+    color: $okie-muted;
+
+    span {
+      color: $okie-strong;
+    }
+  }
+
+  // Download
+
+  .okie-download {
+    position: relative;
+    border-radius: 14px;
+    background-color: $okie-blue;
+    color: $okie-strong;
+    padding: clamp(32px, 6%, 56px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .okie-download-watermark {
+    position: absolute;
+    right: -6%;
+    bottom: -30%;
+    font-family: 'Merriweather', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(140px, 34vw, 300px);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.3);
+    letter-spacing: -0.04em;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .okie-download-title {
+    position: relative;
+    margin: 0;
+    font-weight: 400;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    max-width: 520px;
+    text-wrap: pretty;
+
+    em {
+      font-family: 'Merriweather', Georgia, serif;
+      font-style: italic;
+    }
+  }
+
+  .okie-download-note {
+    position: relative;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 460px;
+  }
+
+  // Footer
+
+  .okie-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 32px;
+    border-top: 1px solid $okie-rule;
+    font-size: 14px;
+    color: $okie-faint;
+  }
+
+  .okie-footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    span {
+      font-family: 'Merriweather', Georgia, serif;
+      font-style: italic;
+      font-size: 17px;
+      color: $okie-strong;
+    }
+  }
+
+  .okie-footer-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .okie-footer-link {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background-color: $okie-chip;
+    color: #c9bdac;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
+
+    &:hover {
+      background-color: $okie-text;
+      color: $okie-bg;
+    }
+  }
+}
