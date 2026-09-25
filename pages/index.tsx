@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import Footer from '../components/Footer';
 import { useAnimatedTiles } from '../hooks/useAnimatedTiles';
 
@@ -97,60 +98,62 @@ const Home: NextPage = () => {
             <span className="home-work-count">03</span>
           </div>
 
-          <div className="home-project">
-            <div className="home-preview home-preview-okie" data-tile="okie">
-              <Wordmark text="Okie" />
-              <div className="home-mock home-mock-okie">
-                <div className="home-mock-okie-head">
-                  <span>
-                    Review <b>3</b> / <b>4</b>
-                  </span>
-                  <span className="home-mock-okie-severity">
-                    <span className="home-mock-okie-dot" />
-                    Critical
-                  </span>
-                </div>
-                <div className="home-mock-okie-title">Retry semantics changed</div>
-                <p className="home-mock-okie-body">
-                  The retry wraps the whole publish step, not only the upload, so a retry can re-run the Instagram
-                  publish call.
-                </p>
-                <div className="home-mock-okie-checklist">
-                  <div className="home-mock-okie-item">
-                    <span className="home-mock-okie-check">
-                      <svg
-                        width="9"
-                        height="9"
-                        viewBox="0 0 10 10"
-                        fill="none"
-                        stroke="#fff"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M2 5l2.2 2.2L8 3" />
-                      </svg>
+          <Link href="/okie">
+            <a className="home-project">
+              <div className="home-preview home-preview-okie" data-tile="okie">
+                <Wordmark text="Okie" />
+                <div className="home-mock home-mock-okie">
+                  <div className="home-mock-okie-head">
+                    <span>
+                      Review <b>3</b> / <b>4</b>
                     </span>
-                    <span className="home-mock-okie-done">Can retries create duplicate posts?</span>
+                    <span className="home-mock-okie-severity">
+                      <span className="home-mock-okie-dot" />
+                      Critical
+                    </span>
                   </div>
-                  <div className="home-mock-okie-item">
-                    <span className="home-mock-okie-box" />
-                    <span>Should retry wrap only the upload?</span>
+                  <div className="home-mock-okie-title">Retry semantics changed</div>
+                  <p className="home-mock-okie-body">
+                    The retry wraps the whole publish step, not only the upload, so a retry can re-run the Instagram
+                    publish call.
+                  </p>
+                  <div className="home-mock-okie-checklist">
+                    <div className="home-mock-okie-item">
+                      <span className="home-mock-okie-check">
+                        <svg
+                          width="9"
+                          height="9"
+                          viewBox="0 0 10 10"
+                          fill="none"
+                          stroke="#fff"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M2 5l2.2 2.2L8 3" />
+                        </svg>
+                      </span>
+                      <span className="home-mock-okie-done">Can retries create duplicate posts?</span>
+                    </div>
+                    <div className="home-mock-okie-item">
+                      <span className="home-mock-okie-box" />
+                      <span>Should retry wrap only the upload?</span>
+                    </div>
                   </div>
-                </div>
-                <div className="home-mock-okie-actions">
-                  <span className="home-mock-okie-ghost">Needs changes</span>
-                  <span className="home-mock-okie-primary">Looks good</span>
+                  <div className="home-mock-okie-actions">
+                    <span className="home-mock-okie-ghost">Needs changes</span>
+                    <span className="home-mock-okie-primary">Looks good</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <p className="home-caption">
-              <strong>Okie</strong>
-              <br />
-              Better PR reviews for GitHub. Cuts a 142-file PR down to the 4 changes that matter.
-            </p>
-          </div>
+              <p className="home-caption">
+                <strong>Okie</strong>
+                <br />
+                Better PR reviews for GitHub. Cuts a 142-file PR down to the 4 changes that matter.
+              </p>
+            </a>
+          </Link>
 
           <a className="home-project" href="https://www.trypartners.app" target="_blank" rel="noopener noreferrer">
             <div className="home-preview home-preview-partners" data-tile="partners">

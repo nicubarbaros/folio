@@ -67,7 +67,11 @@ export function useAnimatedTiles() {
       if (!canHover) {
         const handleClick = (event: MouseEvent) => {
           if (revealed === tile) return;
+          // preventDefault holds back a plain anchor, but next/link navigates
+          // from the anchor's own onClick and never looks at defaultPrevented,
+          // so the click must not reach it either
           event.preventDefault();
+          event.stopPropagation();
           revealed?.hide();
           revealed = tile;
           tile.show();
