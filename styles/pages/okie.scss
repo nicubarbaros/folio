@@ -255,15 +255,9 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     max-width: 100%;
   }
 
-  // Only clip while transform-scaling — fluid How stage must not eat card shadows
-  // (clipped shadows read as a fake blue-to-black fade).
   .okie-shot-scale,
   .okie-how-stage-scale.is-scaled-frame {
-    overflow: hidden;
-  }
-
-  .okie-how-stage-scale.is-fluid-frame {
-    overflow: visible;
+    overflow: hidden; // clip pre-transform layout width
   }
 
   // Product shot
@@ -945,39 +939,46 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     color: $okie-muted;
   }
 
-  .okie-how-stage {
+  // v3 HTML: flex:1.6 1 420px; height:540px; padding:28px; overflow:hidden;
+  // align center; fade at bottom. ScaleFrame only shrinks this on narrow viewports.
+  .okie-how-stage-scale {
     flex: 1.6 1 420px;
     min-width: 0;
+  }
+
+  .okie-how-stage {
     position: relative;
+    width: 100%;
+    height: 540px;
+    box-sizing: border-box;
     border-radius: 14px;
     background-color: $okie-blue;
-    // Visible so card shadows aren't clipped into a fake bottom fade; the
-    // page-level overflow-x:hidden still prevents sideways scroll.
-    overflow: visible;
-    padding: 28px;
-    box-sizing: border-box;
-  }
-
-  .okie-how-stage-stack {
-    display: grid;
-    width: 100%;
-    align-items: center;
-    justify-items: center;
-  }
-
-  .okie-how-stage-pane {
-    grid-area: 1 / 1;
-    width: 100%;
+    overflow: hidden;
     display: flex;
-    justify-content: center;
     align-items: center;
-    visibility: hidden;
-    pointer-events: none;
+    justify-content: center;
+    padding: 28px;
+  }
 
-    &.is-active {
-      visibility: visible;
-      pointer-events: auto;
-    }
+  .okie-how-stage-fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 80px;
+    background: linear-gradient(transparent, $okie-blue);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  // Workflows mock sits in an absolute slot matching the HTML
+  // (left/right/top: 28px inside the 540px stage).
+  .okie-how-wf-slot {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    top: 28px;
+    z-index: 1;
   }
 
   .okie-stage-card {
@@ -985,9 +986,7 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     flex-shrink: 0;
     width: 100%;
     max-width: 460px;
-    // No drop shadow — a soft shadow over the blue stage reads as the old
-    // blue-to-black fade when clipped, and isn't needed for the mock cards.
-    box-shadow: none;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
     border-radius: 12px;
     background-color: $okie-strong;
     color: $ui-ink;
@@ -997,7 +996,7 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     flex-direction: column;
     gap: 10px;
     font-size: 13px;
-    overflow: visible;
+    overflow: hidden;
 
     .okie-flow-step {
       gap: 10px;
@@ -1005,6 +1004,12 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
       border-radius: 8px;
       font-size: 13px;
       line-height: 1.4;
+      background-color: $okie-strong;
+
+      &.is-critical,
+      &.is-changed {
+        background-color: $ui-surface;
+      }
     }
 
     .okie-flow-tag {
@@ -1032,9 +1037,10 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     max-width: none;
     width: 100%;
     padding: 0;
+    border: 0;
     background-color: $ui-surface;
-    box-shadow: none;
-    overflow: hidden; // keep window chrome corners clean
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
   }
 
   .okie-wf-mini-bar {
@@ -1078,7 +1084,7 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   }
 
   .okie-wf-mini-body {
-    padding: 20px 20px 24px;
+    padding: clamp(16px, 4%, 28px);
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -1096,6 +1102,12 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     margin-top: 4px;
   }
 
+  .okie-wf-trigger-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
   .okie-wf-trigger {
     display: inline-flex;
     align-items: center;
@@ -1107,8 +1119,18 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     font-size: 14px;
     font-weight: 500;
     white-space: nowrap;
-    margin: 20px auto 0;
     color: $ui-body;
+  }
+
+  .okie-wf-rail-line {
+    width: 1px;
+    height: 14px;
+    background-color: #e0e0e0;
+    margin: 0 auto;
+
+    &.is-short {
+      height: 12px;
+    }
   }
 
   .okie-wf-node {
@@ -1119,7 +1141,20 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     border-radius: 14px;
     border: 1px solid $ui-line;
     background-color: $okie-strong;
-    margin-top: 14px;
+
+    &.is-focus {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      border: 1.5px solid $okie-blue;
+      box-shadow: 0 0 0 4px rgba(43, 75, 214, 0.1);
+    }
+  }
+
+  .okie-wf-node-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
   }
 
   .okie-wf-node-icon {
@@ -1138,8 +1173,9 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
       color: $ui-critical;
     }
 
-    &.is-queue {
-      font-size: 16px;
+    &.is-deps {
+      background-color: #eef1fc;
+      color: $okie-blue;
     }
 
     svg {
@@ -1172,6 +1208,17 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     white-space: nowrap;
   }
 
+  .okie-wf-badge-analyze {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: #eef1fc;
+    font-size: 11px;
+    color: $okie-blue;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   .okie-wf-node-detail {
     font-size: 13px;
     color: $ui-muted;
@@ -1188,18 +1235,69 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     font-size: 12px;
     color: $ui-body;
     flex-shrink: 0;
+
+    &.is-deps {
+      background-color: #eef1fc;
+      color: $okie-blue;
+    }
+  }
+
+  .okie-wf-analyzed {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background-color: $ui-surface;
+    border: 1px solid #ededed;
+    font-size: 12px;
+
+    .okie-mono {
+      color: $ui-muted;
+    }
+
+    .okie-truncate {
+      min-width: 0;
+    }
+  }
+
+  .okie-wf-analyzed-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: #e3f5ea;
+    color: #00873a;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .okie-wf-route {
-    align-self: center;
-    margin: 12px auto;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
     padding: 4px 12px;
     border-radius: 999px;
     background-color: $ui-line-soft;
     font-size: 12px;
     color: $ui-muted;
     white-space: nowrap;
-    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .okie-wf-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1.5px dashed #dcdcdc;
+    font-size: 14px;
+    color: $ui-muted;
   }
 
   .okie-mock-head {
@@ -1564,11 +1662,8 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   }
 
   @media (max-width: 720px) {
-    .okie-how-stage {
+    .okie-how-stage-scale {
       flex-basis: 100%;
-      // Height comes from ScaleFrame / stacked panes — no fixed leftover gap.
-      height: auto;
-      padding: 20px;
     }
   }
 

@@ -220,8 +220,14 @@ function InboxMock() {
   );
 }
 
+function WfRail({ short }: { short?: boolean }) {
+  return <div className={`okie-wf-rail-line${short ? ' is-short' : ''}`} aria-hidden="true" />;
+}
+
 function WorkflowsMock() {
+  // v3 HTML: absolute slot left/right/top 28px inside the 540px stage.
   return (
+    <div className="okie-how-wf-slot">
     <div className="okie-stage-card okie-stage-card-wf">
       <div className="okie-wf-mini-bar">
         <div className="okie-window-lights" aria-hidden="true">
@@ -240,15 +246,23 @@ function WorkflowsMock() {
       <div className="okie-wf-mini-body">
         <div className="okie-wf-pipeline-title">Automated workflows</div>
         <div className="okie-wf-pipeline-sub">How Default sorts and acts on incoming pull requests.</div>
-        <div className="okie-wf-trigger">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-            <path d="M7 4l13 8-13 8z" />
-          </svg>
-          A pull request needs your review
+
+        <div className="okie-wf-trigger-wrap">
+          <div className="okie-wf-trigger">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#525252" strokeWidth="2" aria-hidden="true">
+              <path d="M7 4l13 8-13 8z" />
+            </svg>
+            A pull request needs your review
+          </div>
         </div>
+        <WfRail />
+
         <div className="okie-wf-node">
-          <span className="okie-wf-node-icon is-inbox">
-            <IconInbox />
+          <span className="okie-wf-node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#525252" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+              <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+            </svg>
           </span>
           <div className="okie-wf-node-body">
             <div className="okie-wf-node-title">All review requests in Default</div>
@@ -256,17 +270,31 @@ function WorkflowsMock() {
           </div>
           <span className="okie-wf-count">7</span>
         </div>
+        <WfRail />
+
         <div className="okie-wf-node">
-          <span className="okie-wf-node-icon is-queue">✦</span>
+          <span className="okie-wf-node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#525252" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+              <path d="M19 15v4M17 17h4" />
+            </svg>
+          </span>
           <div className="okie-wf-node-body">
             <div className="okie-wf-node-title">Queue</div>
             <div className="okie-wf-node-detail">Categorize first, then analyze</div>
           </div>
           <span className="okie-wf-count">2</span>
         </div>
+        <WfRail short />
         <div className="okie-wf-route">then route to the first match</div>
-        <div className="okie-wf-node is-danger">
-          <span className="okie-wf-node-icon is-danger">⛨</span>
+        <WfRail short />
+
+        <div className="okie-wf-node">
+          <span className="okie-wf-node-icon is-danger">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e7000b" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z" />
+            </svg>
+          </span>
           <div className="okie-wf-node-body">
             <div className="okie-wf-node-title">
               Critical<span className="okie-wf-wait">Wait</span>
@@ -275,7 +303,52 @@ function WorkflowsMock() {
           </div>
           <span className="okie-wf-count">3</span>
         </div>
+        <WfRail />
+
+        <div className="okie-wf-node is-focus">
+          <div className="okie-wf-node-main">
+            <span className="okie-wf-node-icon is-deps">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2b4bd6" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M13 2L4 14h7l-1 8 9-12h-7z" />
+              </svg>
+            </span>
+            <div className="okie-wf-node-body">
+              <div className="okie-wf-node-title">
+                Dependencies<span className="okie-wf-badge-analyze">Auto-analyze</span>
+              </div>
+              <div className="okie-wf-node-detail">Version bumps in package.json only</div>
+            </div>
+            <span className="okie-wf-count is-deps">2</span>
+          </div>
+          <div className="okie-wf-analyzed">
+            <span className="okie-truncate">
+              <span className="okie-mono">#4821</span> Bump @tanstack/query to 5.62
+            </span>
+            <span className="okie-wf-analyzed-pill">✓ Analyzed</span>
+          </div>
+        </div>
+        <WfRail />
+
+        <div className="okie-wf-node">
+          <span className="okie-wf-node-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#525252" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 7v5l3 2" />
+            </svg>
+          </span>
+          <div className="okie-wf-node-body">
+            <div className="okie-wf-node-title">
+              Default<span className="okie-wf-wait">Wait</span>
+            </div>
+            <div className="okie-wf-node-detail">Every PR not caught above</div>
+          </div>
+          <span className="okie-wf-count">2</span>
+        </div>
+        <WfRail />
+
+        <div className="okie-wf-add">+ Add section</div>
       </div>
+    </div>
     </div>
   );
 }
@@ -751,28 +824,16 @@ const Okie: NextPage = () => {
               })}
             </ol>
 
-            <div className="okie-how-stage" aria-live="polite">
-              <ScaleFrame
-                designWidth={HOW_STAGE_DESIGN_WIDTH}
-                fluidAbove={360}
-                className="okie-how-stage-scale"
-              >
-                <div className="okie-how-stage-stack">
-                  {howSteps.map((step, index) => {
-                    const on = how.step === index + 1;
-                    return (
-                      <div
-                        key={step.id}
-                        className={`okie-how-stage-pane${on ? ' is-active' : ''}`}
-                        aria-hidden={!on}
-                      >
-                        <HowMock step={step.id} />
-                      </div>
-                    );
-                  })}
-                </div>
-              </ScaleFrame>
-            </div>
+            <ScaleFrame
+              designWidth={HOW_STAGE_DESIGN_WIDTH}
+              fluidAbove={360}
+              className="okie-how-stage-scale"
+            >
+              <div className="okie-how-stage" aria-live="polite">
+                <HowMock step={howSteps[how.step - 1].id} />
+                <div className="okie-how-stage-fade" aria-hidden="true" />
+              </div>
+            </ScaleFrame>
           </div>
         </section>
 
