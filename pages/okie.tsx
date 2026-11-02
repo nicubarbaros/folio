@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+
+const HOW_DUR = 4500;
+const HOW_TICK = 100;
 
 // There is no build to hand out yet. Fill this in and both calls to action
 // become real download links; until then they anchor to the download section.
@@ -99,30 +102,7 @@ const howSteps: Array<{ id: HowStepId; number: string; title: string; body: stri
     id: 'approve',
     number: '5',
     title: 'Approve on GitHub',
-    body: 'Your decisions post back as a real review, with a record of what you inspected and what you skipped.'
-  }
-];
-
-const workflowLanes = [
-  {
-    kind: 'inbox' as const,
-    title: 'All review requests in Default',
-    detail: 'Enters the workflow',
-    count: '7'
-  },
-  {
-    kind: 'queue' as const,
-    title: 'Queue',
-    detail: 'Categorize first, then analyze',
-    count: '2'
-  },
-  {
-    kind: 'lane' as const,
-    title: 'Critical',
-    badge: 'Wait',
-    detail: 'Touches billing, auth or data deletion',
-    count: '3',
-    danger: true
+    body: 'Your decisions post back as a real review.'
   }
 ];
 
@@ -149,143 +129,52 @@ function DownloadCta({ variant }: { variant: 'primary' | 'invert' }) {
   );
 }
 
-function NavIcon({ kind }: { kind: 'inbox' | 'tracked' | 'workflows' }) {
-  switch (kind) {
-    case 'inbox':
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <path d="M4 13h4l2 3h4l2-3h4v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5z" />
-          <path d="M4 13l2.5-8h11L20 13" />
-        </svg>
-      );
-    case 'tracked':
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
-        </svg>
-      );
-    case 'workflows':
-      return (
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <circle cx="6" cy="6" r="2.2" />
-          <circle cx="18" cy="6" r="2.2" />
-          <circle cx="12" cy="18" r="2.2" />
-          <path d="M8 6h8M6 8v4.5A3.5 3.5 0 0 0 9.5 16H12M18 8v4.5A3.5 3.5 0 0 1 14.5 16H12" />
-        </svg>
-      );
-    default: {
-      const _exhaustive: never = kind;
-      return _exhaustive;
-    }
-  }
-}
-
-function SidebarGroup({
-  label,
-  action,
-  children
-}: {
-  label: string;
-  action?: string;
-  children?: React.ReactNode;
-}) {
+function BuyLicenseCta({ variant }: { variant: 'ghost' | 'on-blue' }) {
   return (
-    <div className="okie-sidebar-group">
-      <div className="okie-sidebar-heading">
-        <span>{label}</span>
-        {action && <span className="okie-sidebar-action">{action}</span>}
-      </div>
-      {children}
-    </div>
+    <a
+      className={`okie-cta okie-cta-${variant === 'ghost' ? 'ghost' : 'on-blue'}`}
+      href={buyLicenseUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Buy license, €39
+    </a>
   );
 }
 
-function SidebarRow({ label, count, active }: { label: string; count?: number | string; active?: boolean }) {
+function IconRepos() {
   return (
-    <div className={`okie-sidebar-row${active ? ' is-active' : ''}`}>
-      <span className="okie-truncate">{label}</span>
-      {count !== undefined && <span className="okie-mono">{count}</span>}
-    </div>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 7h6l2 2h10v10H3z" />
+    </svg>
   );
 }
 
-function SidebarNavRow({
-  label,
-  kind,
-  count,
-  action,
-  active
-}: {
-  label: string;
-  kind: 'inbox' | 'tracked' | 'workflows';
-  count?: number | string;
-  action?: string;
-  active?: boolean;
-}) {
+function IconInbox() {
   return (
-    <div className={`okie-sidebar-nav${active ? ' is-active' : ''}`}>
-      <span className="okie-sidebar-nav-label">
-        <span className="okie-sidebar-nav-icon">
-          <NavIcon kind={kind} />
-        </span>
-        {label}
-      </span>
-      {action ? (
-        <span className="okie-sidebar-action">{action}</span>
-      ) : (
-        count !== undefined && <span className="okie-sidebar-badge">{count}</span>
-      )}
-    </div>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+      <path d="M5 5h14l3 7v7H2v-7z" />
+    </svg>
   );
 }
 
-function AppSidebar({ activeNav = 'repos' }: { activeNav?: 'repos' | 'workflows' }) {
+function IconTracked() {
   return (
-    <aside className="okie-sidebar">
-      <div className="okie-workspace-switch">
-        <span className="okie-workspace-name">Default</span>
-        <span className="okie-workspace-caret" aria-hidden="true">
-          ▾
-        </span>
-      </div>
-
-      <SidebarGroup label="REPOS">
-        <SidebarRow label="All repositories" active={activeNav === 'repos'} />
-        <SidebarRow label="netflix/web" />
-        <SidebarRow label="netflix/tv-ui" />
-      </SidebarGroup>
-
-      <div className="okie-sidebar-navs">
-        <SidebarNavRow label="Inbox" kind="inbox" count={3} />
-        <SidebarNavRow label="Tracked" kind="tracked" count={8} />
-        <SidebarNavRow label="Workflows" kind="workflows" action="Add" active={activeNav === 'workflows'} />
-      </div>
-    </aside>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="4" />
+    </svg>
   );
 }
 
-function AppTopBar({ crumb = 'netflix/web' }: { crumb?: string }) {
+function IconWorkflows() {
   return (
-    <div className="okie-window-bar">
-      <div className="okie-window-lights" aria-hidden="true">
-        <span />
-        <span />
-        <span />
-      </div>
-      <div className="okie-window-brand">
-        <span className="okie-window-mark" aria-hidden="true">
-          O
-        </span>
-        <span className="okie-window-crumb">
-          Okie <span className="okie-window-slash">/</span> {crumb}
-        </span>
-      </div>
-      <div className="okie-window-sync">
-        <span className="okie-dot-live" />
-        Synced
-      </div>
-    </div>
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+      <path d="M10 6.5h4v7.5" />
+    </svg>
   );
 }
 
@@ -311,145 +200,81 @@ function Flow({ steps }: { steps: Array<{ label: string; tone: Tone }> }) {
   );
 }
 
-function WorkflowIcon({
-  kind
-}: {
-  kind: 'inbox' | 'queue' | 'lane' | 'wait' | 'comment' | 'approve' | 'play' | 'shield';
-}) {
-  switch (kind) {
-    case 'play':
-      return (
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
-          <path d="M3.2 1.6v8.8l7.2-4.4-7.2-4.4z" />
-        </svg>
-      );
-    case 'inbox':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <path d="M4 13h4l2 3h4l2-3h4v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5z" />
-          <path d="M4 13l2.5-8h11L20 13" />
-        </svg>
-      );
-    case 'queue':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <path d="M12 3l1.8 4.6L18.5 9l-3.6 3.2.9 4.8L12 14.8 8.2 17l.9-4.8L5.5 9l4.7-1.4L12 3z" />
-        </svg>
-      );
-    case 'shield':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <path d="M12 3l7 3v5c0 4.5-2.8 7.4-7 9-4.2-1.6-7-4.5-7-9V6l7-3z" />
-        </svg>
-      );
-    case 'lane':
-    case 'wait':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <circle cx="12" cy="12" r="8" />
-          <path d="M12 8v5l3 2" />
-        </svg>
-      );
-    case 'comment':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v6A2.5 2.5 0 0 1 16.5 15H11l-4 3.5V15H7.5A2.5 2.5 0 0 1 5 12.5v-6z" />
-        </svg>
-      );
-    case 'approve':
-      return (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-          <circle cx="12" cy="12" r="8" />
-          <path d="M8.5 12.2l2.3 2.3 4.7-4.8" />
-        </svg>
-      );
-    default: {
-      const _exhaustive: never = kind;
-      return _exhaustive;
-    }
-  }
-}
-
-function WorkflowNode({
-  kind,
-  title,
-  detail,
-  count,
-  badge,
-  danger
-}: {
-  kind: 'inbox' | 'queue' | 'lane';
-  title: string;
-  detail: string;
-  count: string;
-  badge?: string;
-  danger?: boolean;
-}) {
-  const iconKind = danger ? 'shield' : kind;
-
+function InboxMock() {
   return (
-    <div className={`okie-wf-node is-${kind}${danger ? ' is-danger' : ''}`}>
-      <span className={`okie-wf-node-icon is-${iconKind}${danger ? ' is-danger' : ''}`}>
-        <WorkflowIcon kind={iconKind} />
-      </span>
-      <div className="okie-wf-node-body">
-        <div className="okie-wf-node-title">
-          {title}
-          {badge && <span className="okie-wf-wait">{badge}</span>}
-        </div>
-        <div className="okie-wf-node-detail">{detail}</div>
+    <div className="okie-stage-card">
+      <div className="okie-mock-head">
+        INBOX<span>⌘K</span>
       </div>
-      <span className="okie-wf-count">{count}</span>
+      {inboxItems.map(item => (
+        <div className={`okie-inbox-row${item.tone === 'critical' ? ' is-active' : ''}`} key={item.id}>
+          <span className="okie-inbox-label">
+            <span className={`okie-inbox-dot is-${item.tone}`} />
+            <span className="okie-mono okie-inbox-id">{item.id}</span>
+            <span className="okie-truncate">{item.title}</span>
+          </span>
+          <span className="okie-inbox-meta">{item.meta}</span>
+        </div>
+      ))}
     </div>
   );
 }
 
 function WorkflowsMock() {
   return (
-    <div className="okie-window okie-window-how">
-      <AppTopBar crumb="Default" />
-      <div className="okie-wf-pipeline okie-wf-pipeline-solo">
-        <div className="okie-wf-pipeline-head">
-          <div className="okie-wf-pipeline-title">Automated workflows</div>
-          <div className="okie-wf-pipeline-sub">How Default sorts and acts on incoming pull requests.</div>
+    <div className="okie-stage-card okie-stage-card-wf">
+      <div className="okie-wf-mini-bar">
+        <div className="okie-window-lights" aria-hidden="true">
+          <span />
+          <span />
+          <span />
         </div>
-
-        <div className="okie-wf-rail">
-          <div className="okie-wf-trigger">
-            <WorkflowIcon kind="play" />
-            <span>A pull request needs your review</span>
-          </div>
-
-          <WorkflowNode {...workflowLanes[0]} />
-          <WorkflowNode {...workflowLanes[1]} />
-
-          <div className="okie-wf-route">then route to the first match</div>
-
-          <WorkflowNode {...workflowLanes[2]} />
+        <div className="okie-wf-mini-brand">
+          <span className="okie-window-mark" aria-hidden="true">
+            O
+          </span>
+          Okie <span className="okie-window-slash">/</span> <span className="okie-mono">Default</span>
         </div>
+        <div />
       </div>
-    </div>
-  );
-}
-
-function InboxMock() {
-  return (
-    <div className="okie-window okie-window-how">
-      <AppTopBar crumb="Default" />
-      <div className="okie-mock okie-mock-panel">
-        <div className="okie-mock-head">
-          INBOX<span>⌘K</span>
+      <div className="okie-wf-mini-body">
+        <div className="okie-wf-pipeline-title">Automated workflows</div>
+        <div className="okie-wf-pipeline-sub">How Default sorts and acts on incoming pull requests.</div>
+        <div className="okie-wf-trigger">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path d="M7 4l13 8-13 8z" />
+          </svg>
+          A pull request needs your review
         </div>
-        {inboxItems.map(item => (
-          <div className={`okie-inbox-row${item.tone === 'critical' ? ' is-active' : ''}`} key={item.id}>
-            <span className="okie-inbox-label">
-              <span className={`okie-inbox-dot is-${item.tone}`} />
-              <span className="okie-mono okie-inbox-id">{item.id}</span>
-              <span className="okie-truncate">{item.title}</span>
-            </span>
-            <span className="okie-inbox-meta">{item.meta}</span>
+        <div className="okie-wf-node">
+          <span className="okie-wf-node-icon is-inbox">
+            <IconInbox />
+          </span>
+          <div className="okie-wf-node-body">
+            <div className="okie-wf-node-title">All review requests in Default</div>
+            <div className="okie-wf-node-detail">Enters the workflow</div>
           </div>
-        ))}
+          <span className="okie-wf-count">7</span>
+        </div>
+        <div className="okie-wf-node">
+          <span className="okie-wf-node-icon is-queue">✦</span>
+          <div className="okie-wf-node-body">
+            <div className="okie-wf-node-title">Queue</div>
+            <div className="okie-wf-node-detail">Categorize first, then analyze</div>
+          </div>
+          <span className="okie-wf-count">2</span>
+        </div>
+        <div className="okie-wf-route">then route to the first match</div>
+        <div className="okie-wf-node is-danger">
+          <span className="okie-wf-node-icon is-danger">⛨</span>
+          <div className="okie-wf-node-body">
+            <div className="okie-wf-node-title">
+              Critical<span className="okie-wf-wait">Wait</span>
+            </div>
+            <div className="okie-wf-node-detail">Touches billing, auth or data deletion</div>
+          </div>
+          <span className="okie-wf-count">3</span>
+        </div>
       </div>
     </div>
   );
@@ -457,55 +282,49 @@ function InboxMock() {
 
 function BriefMock() {
   return (
-    <div className="okie-window okie-window-how">
-      <AppTopBar crumb="netflix/web" />
-      <div className="okie-mock okie-mock-panel">
-        <div className="okie-tabs okie-tabs-mock">
-          <span className="is-active">Review</span>
-          <span>Map</span>
-        </div>
-        <div className="okie-mock-title">Architecture affected</div>
-        <Flow steps={briefSteps} />
+    <div className="okie-stage-card">
+      <div className="okie-tabs okie-tabs-mock">
+        <span className="is-active">Review</span>
+        <span>Map</span>
       </div>
+      <div className="okie-mock-title">Architecture affected</div>
+      <Flow steps={briefSteps} />
     </div>
   );
 }
 
 function GuidedMock() {
   return (
-    <div className="okie-window okie-window-how">
-      <AppTopBar crumb="netflix/web" />
-      <div className="okie-mock okie-mock-panel">
-        <div className="okie-mock-head okie-mock-head-plain">
-          <span>
-            Review <strong>1</strong> / 3
-          </span>
-          <span className="okie-mock-attention">
-            <span className="okie-dot-live" />
-            Routine attention
-          </span>
+    <div className="okie-stage-card">
+      <div className="okie-mock-head okie-mock-head-plain">
+        <span>
+          Review <strong>1</strong> / 3
+        </span>
+        <span className="okie-mock-attention">
+          <span className="okie-dot-live" />
+          Routine attention
+        </span>
+      </div>
+      <div className="okie-mock-title okie-mock-title-lg">We add a retry policy for failed playback heartbeats.</div>
+      <div className="okie-questions">
+        <div className="okie-questions-label">REVIEW QUESTIONS</div>
+        <div className="okie-question">
+          <span className="okie-checkbox" />
+          <span>Can a retried heartbeat move the saved position backwards?</span>
         </div>
-        <div className="okie-mock-title okie-mock-title-lg">We add a retry policy for failed playback heartbeats.</div>
-        <div className="okie-questions">
-          <div className="okie-questions-label">REVIEW QUESTIONS</div>
-          <div className="okie-question">
-            <span className="okie-checkbox" />
-            <span>Can a retried heartbeat move the saved position backwards?</span>
-          </div>
-        </div>
-        <div className="okie-file">
-          <span className="okie-truncate">
-            <span className="okie-file-dir">playback/</span>heartbeat-retry.ts
-          </span>
-          <span className="okie-file-stat">
-            <span className="okie-add">+42</span> <span className="okie-del">−6</span>
-          </span>
-        </div>
-        <div className="okie-mock-actions">
-          <span className="okie-action-skip">Skip</span>
-          <span className="okie-action-ghost">Needs changes</span>
-          <span className="okie-action-primary">✓ Looks good</span>
-        </div>
+      </div>
+      <div className="okie-file">
+        <span className="okie-truncate">
+          <span className="okie-file-dir">playback/</span>heartbeat-retry.ts
+        </span>
+        <span className="okie-file-stat">
+          <span className="okie-add">+42</span> <span className="okie-del">−6</span>
+        </span>
+      </div>
+      <div className="okie-mock-actions">
+        <span className="okie-action-skip">Skip</span>
+        <span className="okie-action-ghost">Needs changes</span>
+        <span className="okie-action-primary">✓ Looks good</span>
       </div>
     </div>
   );
@@ -513,27 +332,24 @@ function GuidedMock() {
 
 function ApproveMock() {
   return (
-    <div className="okie-window okie-window-how">
-      <AppTopBar crumb="netflix/web" />
-      <div className="okie-mock okie-mock-panel">
-        <div className="okie-mock-label">REVIEW COMPLETE</div>
-        <div className="okie-mock-title okie-mock-title-lg">Retry failed playback heartbeats</div>
-        <div className="okie-mock-meta">3 review units · 4 min elapsed · 18 files, 5 inspected</div>
-        <div className="okie-summary">
-          {completedUnits.map(unit => (
-            <div className="okie-summary-row" key={unit}>
-              <span className="okie-summary-label">
-                <span className="okie-tick">✓</span>
-                <span className="okie-truncate">{unit}</span>
-              </span>
-              <span className="okie-summary-verdict">Looks good</span>
-            </div>
-          ))}
-        </div>
-        <div className="okie-mock-actions">
-          <span className="okie-action-pill">Request changes</span>
-          <span className="okie-action-pill-primary">Approve on GitHub</span>
-        </div>
+    <div className="okie-stage-card">
+      <div className="okie-mock-label">REVIEW COMPLETE</div>
+      <div className="okie-mock-title okie-mock-title-lg">Retry failed playback heartbeats</div>
+      <div className="okie-mock-meta">3 review units · 4 min elapsed · 18 files, 5 inspected</div>
+      <div className="okie-summary">
+        {completedUnits.map(unit => (
+          <div className="okie-summary-row" key={unit}>
+            <span className="okie-summary-label">
+              <span className="okie-tick">✓</span>
+              <span className="okie-truncate">{unit}</span>
+            </span>
+            <span className="okie-summary-verdict">Looks good</span>
+          </div>
+        ))}
+      </div>
+      <div className="okie-mock-actions">
+        <span className="okie-action-pill">Request changes</span>
+        <span className="okie-action-pill-primary">Approve on GitHub</span>
       </div>
     </div>
   );
@@ -558,8 +374,142 @@ function HowMock({ step }: { step: HowStepId }) {
   }
 }
 
+// Renders children at a fixed desktop design width, then scales them down to the
+// container so mobile shows a crisp miniature instead of a reflowed/squished layout.
+// When the container is at least `fluidAbove` (defaults to designWidth), children
+// layout fluidly at 100% width with no transform — used by the How stage so
+// desktop stays 1:1 while mobile still miniaturizes.
+function ScaleFrame({
+  designWidth,
+  fluidAbove,
+  className,
+  children
+}: {
+  designWidth: number;
+  fluidAbove?: number;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const [metrics, setMetrics] = useState<{ scale: number; height: number; fluid: boolean } | null>(null);
+
+  useEffect(() => {
+    const outer = outerRef.current;
+    const inner = innerRef.current;
+    if (!outer || !inner) return undefined;
+
+    const threshold = fluidAbove ?? designWidth;
+
+    const measure = () => {
+      const width = outer.clientWidth;
+      const fluid = width >= threshold;
+      const scale = fluid || width <= 0 ? 1 : width / designWidth;
+      const height = fluid ? 0 : inner.offsetHeight * scale;
+      setMetrics(prev =>
+        prev && prev.scale === scale && prev.fluid === fluid && Math.abs(prev.height - height) < 0.5
+          ? prev
+          : { scale, height, fluid }
+      );
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(outer);
+    ro.observe(inner);
+    return () => ro.disconnect();
+  }, [designWidth, fluidAbove]);
+
+  const ready = metrics !== null;
+  const fluid = metrics?.fluid ?? true;
+
+  return (
+    <div
+      ref={outerRef}
+      className={[className, fluid ? 'is-fluid-frame' : 'is-scaled-frame'].filter(Boolean).join(' ')}
+      style={{
+        ...(!fluid && metrics && metrics.height > 0 ? { height: metrics.height } : null),
+        visibility: ready ? 'visible' : 'hidden'
+      }}
+    >
+      <div
+        ref={innerRef}
+        className={`okie-scale-inner${fluid ? ' is-fluid' : ''}`}
+        style={
+          fluid
+            ? { width: '100%' }
+            : {
+                width: designWidth,
+                transform: `scale(${metrics?.scale ?? 1})`,
+                transformOrigin: 'top left'
+              }
+        }
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
+const SHOT_DESIGN_WIDTH = 1040;
+const HOW_STAGE_DESIGN_WIDTH = 464;
+
 const Okie: NextPage = () => {
-  const [activeStep, setActiveStep] = useState<HowStepId>('workflows');
+  // Mirror the design canvas: { step: 1, paused: false, cycle: 0 }, DUR = 4500.
+  const [how, setHow] = useState({ step: 1, paused: false, cycle: 0 });
+  const leftRef = useRef(HOW_DUR);
+  const howRef = useRef(how);
+  const reduceMotionRef = useRef(false);
+  howRef.current = how;
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return undefined;
+    }
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => {
+      reduceMotionRef.current = mq.matches;
+    };
+    sync();
+    mq.addEventListener?.('change', sync);
+    mq.addListener?.(sync);
+    return () => {
+      mq.removeEventListener?.('change', sync);
+      mq.removeListener?.(sync);
+    };
+  }, []);
+
+  useEffect(() => {
+    leftRef.current = HOW_DUR;
+    const iv = window.setInterval(() => {
+      if (reduceMotionRef.current || howRef.current.paused) return;
+      leftRef.current -= HOW_TICK;
+      if (leftRef.current > 0) return;
+      leftRef.current = HOW_DUR;
+      setHow(s => ({ step: (s.step % 5) + 1, paused: false, cycle: s.cycle + 1 }));
+    }, HOW_TICK);
+    return () => window.clearInterval(iv);
+  }, []);
+
+  const hoverStep = useCallback((n: number) => {
+    setHow(s => {
+      if (s.step === n && s.paused) return s;
+      return { step: n, paused: true, cycle: s.cycle };
+    });
+  }, []);
+
+  const pickStep = useCallback((n: number) => {
+    leftRef.current = HOW_DUR;
+    setHow(s => ({ step: n, paused: false, cycle: s.cycle + 1 }));
+  }, []);
+
+  const resumeHow = useCallback(() => {
+    setHow(s => {
+      if (!s.paused) return s;
+      leftRef.current = HOW_DUR;
+      return { step: s.step, paused: false, cycle: s.cycle + 1 };
+    });
+  }, []);
 
   return (
     <div className="okie">
@@ -591,111 +541,162 @@ const Okie: NextPage = () => {
 
           <div className="okie-actions">
             <DownloadCta variant="primary" />
-            <a
-              className="okie-cta okie-cta-ghost"
-              href={buyLicenseUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Buy license, €39
-            </a>
+            <BuyLicenseCta variant="ghost" />
             <span className="okie-actions-note">7-day free trial. One-time license.</span>
           </div>
         </header>
 
         <section className="okie-shot">
-          <div className="okie-shot-frame">
-            <div className="okie-shot-rings" aria-hidden="true" />
-            <div className="okie-shot-watermark" aria-hidden="true">
-              Okie
-            </div>
+          <ScaleFrame designWidth={SHOT_DESIGN_WIDTH} className="okie-shot-scale">
+            <div className="okie-shot-frame">
+              <div className="okie-shot-watermark" aria-hidden="true">
+                Okie
+              </div>
 
-            <div className="okie-window">
-              <AppTopBar crumb="netflix/web" />
-
-              <div className="okie-window-body">
-                <AppSidebar />
-
-                <main className="okie-review">
-                  <div className="okie-review-back">← Queue</div>
-
-                  <div className="okie-review-badges">
-                    <span className="okie-badge-critical">Critical</span>
-                    <span className="okie-mono okie-review-ref">#481 · netflix/web</span>
+              <div className="okie-window">
+                <div className="okie-window-bar okie-window-bar-simple">
+                  <div className="okie-window-lights" aria-hidden="true">
+                    <span />
+                    <span />
+                    <span />
                   </div>
-
-                  <div className="okie-review-head">
-                    <div className="okie-review-title">Add continue-watching row to the TV home</div>
-                    <span className="okie-review-start">Start review →</span>
+                  <div className="okie-window-title">
+                    Okie <span className="okie-window-slash">/</span>{' '}
+                    <span className="okie-mono okie-window-repo">netflix/web</span>
                   </div>
-
-                  <div className="okie-review-meta">
-                    jsmith · 3h ago ·{' '}
-                    <span className="okie-mono">
-                      142 files · <span className="okie-add">+3,821</span> <span className="okie-del">−912</span>
-                    </span>
+                  <div className="okie-window-sync">
+                    <span className="okie-dot-live" />
+                    Synced
                   </div>
+                </div>
 
-                  <div className="okie-tabs">
-                    <span className="is-active">Review</span>
-                    <span>Map</span>
-                  </div>
-
-                  <div className="okie-card">
-                    <div className="okie-card-block">
-                      <div className="okie-card-title">What changed</div>
-                      <div className="okie-card-body">
-                        The continue-watching row now loads from a precomputed feed instead of querying playback
-                        history on render. Feed rebuilds run in a background job and failed rebuilds are retried.
-                      </div>
+                <div className="okie-window-body okie-window-body-shot">
+                  <aside className="okie-sidebar">
+                    <div className="okie-workspace-switch">
+                      <span className="okie-workspace-name">Default</span>
+                      <span className="okie-workspace-caret" aria-hidden="true">
+                        ⌄
+                      </span>
                     </div>
-                    <div className="okie-card-block okie-card-block-split">
-                      <div className="okie-card-title">Why</div>
-                      <div className="okie-card-note">
-                        Profiles with long histories made the TV home render slow enough to miss the frame budget.
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="okie-card okie-card-tight">
-                    <div className="okie-card-head">
-                      <span className="okie-card-title">Meaningful changes</span>
-                      <span className="okie-card-count">142 files reduced to 4</span>
+                    <div className="okie-sidebar-label">
+                      <span className="okie-sidebar-label-text">
+                        <IconRepos />
+                        REPOS
+                      </span>
                     </div>
-                    {meaningfulChanges.map((change, index) => (
-                      <div className="okie-change" key={change.label}>
-                        <span className={`okie-change-dot is-${change.tone}`} />
-                        <div className="okie-change-body">
-                          <div className="okie-change-label">
-                            {index + 1}. {change.label}
+                    <div className="okie-sidebar-row is-active">All repositories</div>
+                    <div className="okie-sidebar-row">netflix/web</div>
+                    <div className="okie-sidebar-row okie-sidebar-row-spaced">netflix/tv-ui</div>
+
+                    <div className="okie-sidebar-nav is-active">
+                      <span className="okie-sidebar-nav-label">
+                        <IconInbox />
+                        INBOX
+                      </span>
+                      <span className="okie-mono okie-sidebar-count">3</span>
+                    </div>
+                    <div className="okie-sidebar-nav">
+                      <span className="okie-sidebar-nav-label">
+                        <IconTracked />
+                        TRACKED
+                      </span>
+                      <span className="okie-mono okie-sidebar-count">0</span>
+                    </div>
+                    <div className="okie-sidebar-nav">
+                      <span className="okie-sidebar-nav-label">
+                        <IconWorkflows />
+                        WORKFLOWS
+                      </span>
+                      <span className="okie-sidebar-action">Add</span>
+                    </div>
+
+                    <div className="okie-trial-badge">Trial, 7 days left</div>
+                  </aside>
+
+                  <main className="okie-review">
+                    <div className="okie-review-back">← Queue</div>
+
+                    <div className="okie-review-badges">
+                      <span className="okie-badge-critical">Critical</span>
+                      <span className="okie-mono okie-review-ref">#481 · netflix/web</span>
+                    </div>
+
+                    <div className="okie-review-head">
+                      <div className="okie-review-title">Add continue-watching row to the TV home</div>
+                      <span className="okie-review-start">Start review →</span>
+                    </div>
+
+                    <div className="okie-review-meta">
+                      jsmith · 3h ago ·{' '}
+                      <span className="okie-mono">
+                        142 files · <span className="okie-add">+3,821</span> <span className="okie-del">−912</span>
+                      </span>
+                    </div>
+
+                    <div className="okie-tabs">
+                      <span className="is-active">Review</span>
+                      <span>Map</span>
+                    </div>
+
+                    <div className="okie-review-grid">
+                      <div className="okie-review-col">
+                        <div className="okie-card">
+                          <div className="okie-card-block">
+                            <div className="okie-card-title">What changed</div>
+                            <div className="okie-card-body">
+                              The continue-watching row now loads from a precomputed feed instead of querying playback
+                              history on render. Feed rebuilds run in a background job and failed rebuilds are retried.
+                            </div>
                           </div>
-                          <div className="okie-change-desc">{change.description}</div>
+                          <div className="okie-card-block okie-card-block-split">
+                            <div className="okie-card-title">Why</div>
+                            <div className="okie-card-note">
+                              Profiles with long histories made the TV home render slow enough to miss the frame budget.
+                            </div>
+                          </div>
                         </div>
-                        <span className="okie-mono okie-change-files">{change.files}</span>
+
+                        <div className="okie-card okie-card-tight">
+                          <div className="okie-card-head">
+                            <span className="okie-card-title">Meaningful changes</span>
+                            <span className="okie-card-count">142 files reduced to 4</span>
+                          </div>
+                          {meaningfulChanges.map((change, index) => (
+                            <div className="okie-change" key={change.label}>
+                              <span className={`okie-change-dot is-${change.tone}`} />
+                              <div className="okie-change-body">
+                                <div className="okie-change-label">
+                                  {index + 1}. {change.label}
+                                </div>
+                                <div className="okie-change-desc">{change.description}</div>
+                              </div>
+                              <span className="okie-mono okie-change-files">{change.files}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    ))}
-                  </div>
 
-                  <div className="okie-trial-badge">Trial, 7 days left</div>
-                </main>
-
-                <aside className="okie-panel">
-                  <div className="okie-card okie-card-small">
-                    <div className="okie-card-title okie-card-title-flow">Architecture affected</div>
-                    <Flow steps={architectureSteps} />
-                  </div>
-                  <div className="okie-card okie-card-small">
-                    <div className="okie-card-title">Risk areas</div>
-                    <div className="okie-chips">
-                      <span>Concurrency</span>
-                      <span>Error handling</span>
-                      <span>Data</span>
+                      <div className="okie-review-col">
+                        <div className="okie-card okie-card-small">
+                          <div className="okie-card-title okie-card-title-flow">Architecture affected</div>
+                          <Flow steps={architectureSteps} />
+                        </div>
+                        <div className="okie-card okie-card-small">
+                          <div className="okie-card-title">Risk areas</div>
+                          <div className="okie-chips">
+                            <span>Concurrency</span>
+                            <span>Error handling</span>
+                            <span>Data</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </aside>
+                  </main>
+                </div>
               </div>
             </div>
-          </div>
+          </ScaleFrame>
 
           <p className="okie-shot-caption">
             The Review Brief for PR #481. What changed, why, which parts of the system move, and the four units worth
@@ -707,7 +708,7 @@ const Okie: NextPage = () => {
           <div className="okie-eyebrow">THE PROBLEM</div>
           <p className="okie-problem-text">
             You open a 2,000-line PR and start at file 1. Generated noise sits next to the one behavioral change. The
-            diff viewer treats them the same. Time to a confident approval is the cost.
+            diff viewer treats them the same. <span>Time to a confident approval is the cost.</span>
           </p>
         </section>
 
@@ -719,29 +720,58 @@ const Okie: NextPage = () => {
           </div>
 
           <div className="okie-how-layout">
-            <ol className="okie-how-steps">
-              {howSteps.map(step => (
-                <li key={step.id}>
-                  <button
-                    type="button"
-                    className={`okie-how-step${activeStep === step.id ? ' is-active' : ''}`}
-                    onClick={() => setActiveStep(step.id)}
-                    aria-pressed={activeStep === step.id}
-                  >
-                    <span className="okie-how-step-number">{step.number}</span>
-                    <span className="okie-how-step-copy">
-                      <span className="okie-how-step-title">{step.title}</span>
-                      <span className="okie-how-step-body">{step.body}</span>
-                    </span>
-                  </button>
-                </li>
-              ))}
+            <ol className="okie-how-steps" onMouseLeave={resumeHow}>
+              {howSteps.map((step, index) => {
+                const n = index + 1;
+                const on = how.step === n;
+                return (
+                  <li key={step.id}>
+                    <button
+                      type="button"
+                      className={`okie-how-step${on ? ' is-active' : ''}`}
+                      onClick={() => pickStep(n)}
+                      onMouseEnter={() => hoverStep(n)}
+                      aria-pressed={on}
+                    >
+                      {on && (
+                        <span
+                          key={`b${how.step}-${how.cycle}${how.paused ? 'p' : ''}`}
+                          className={`okie-how-progress${how.paused ? ' is-paused' : ''}`}
+                          aria-hidden="true"
+                        />
+                      )}
+                      <span className="okie-how-step-number">{step.number}</span>
+                      <span className="okie-how-step-copy">
+                        <span className="okie-how-step-title">{step.title}</span>
+                        <span className="okie-how-step-body">{step.body}</span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
             </ol>
 
             <div className="okie-how-stage" aria-live="polite">
-              <div className="okie-how-frame">
-                <HowMock step={activeStep} />
-              </div>
+              <ScaleFrame
+                designWidth={HOW_STAGE_DESIGN_WIDTH}
+                fluidAbove={360}
+                className="okie-how-stage-scale"
+              >
+                <div className="okie-how-stage-stack">
+                  {howSteps.map((step, index) => {
+                    const on = how.step === index + 1;
+                    return (
+                      <div
+                        key={step.id}
+                        className={`okie-how-stage-pane${on ? ' is-active' : ''}`}
+                        aria-hidden={!on}
+                      >
+                        <HowMock step={step.id} />
+                      </div>
+                    );
+                  })}
+                </div>
+              </ScaleFrame>
             </div>
           </div>
         </section>
@@ -753,11 +783,11 @@ const Okie: NextPage = () => {
           <h2 className="okie-download-title">
             macOS. Connect GitHub. Pick repos. <em>Review.</em>
           </h2>
-          <DownloadCta variant="invert" />
-          <p className="okie-download-note">
-            Early builds aren’t notarized yet. If macOS blocks the first launch, open System Settings → Privacy &amp;
-            Security and choose “Open Anyway”.
-          </p>
+          <div className="okie-download-actions">
+            <DownloadCta variant="invert" />
+            <BuyLicenseCta variant="on-blue" />
+            <span className="okie-download-note">7-day free trial. One-time license.</span>
+          </div>
         </section>
 
         <footer className="okie-footer">
@@ -765,9 +795,6 @@ const Okie: NextPage = () => {
             <span>Okie</span>· Better PR reviews for GitHub.
           </span>
           <div className="okie-footer-links">
-            <a className="okie-footer-link" href={buyLicenseUrl} target="_blank" rel="noopener noreferrer">
-              Buy license
-            </a>
             <Link href="/">
               <a className="okie-footer-link">Nicu Barbaros</a>
             </Link>

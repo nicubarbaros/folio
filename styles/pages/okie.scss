@@ -38,6 +38,15 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   @return math.div($px, $base) * 1em;
 }
 
+@keyframes okieProgress {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
 .okie {
   min-height: 100vh;
   background-color: $okie-bg;
@@ -58,6 +67,10 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   a {
     color: inherit;
     text-decoration: none;
+
+    &:hover {
+      color: $okie-strong;
+    }
   }
 
   .okie-inner {
@@ -162,6 +175,7 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   }
 
   .okie-actions-note {
+    flex: 1 1 180px;
     font-size: 13px;
     line-height: 1.4;
     color: $okie-faint;
@@ -174,6 +188,8 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     border-radius: 10px;
     font-size: 15px;
     font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
     transition:
       background-color 0.2s ease,
       border-color 0.2s ease,
@@ -204,15 +220,50 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   }
 
   .okie-cta-ghost {
-    padding: 13px 18px;
+    padding: 12px 20px;
     border: 1px solid $okie-border;
-    font-weight: 400;
     color: $okie-text;
 
     &:hover {
       border-color: $okie-text;
       color: $okie-strong;
     }
+  }
+
+  .okie-cta-on-blue {
+    padding: 13px 22px;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    color: $okie-strong;
+    background: transparent;
+
+    &:hover {
+      border-color: $okie-strong;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: $okie-strong;
+    }
+  }
+
+  // Scaled desktop mocks (product shot + How stage). The inner layout is always
+  // the fixed desktop width; ScaleFrame shrinks it on narrow viewports.
+  .okie-scale-inner {
+    will-change: transform;
+  }
+
+  .okie-shot-scale,
+  .okie-how-stage-scale {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  // Only clip while transform-scaling — fluid How stage must not eat card shadows
+  // (clipped shadows read as a fake blue-to-black fade).
+  .okie-shot-scale,
+  .okie-how-stage-scale.is-scaled-frame {
+    overflow: hidden;
+  }
+
+  .okie-how-stage-scale.is-fluid-frame {
+    overflow: visible;
   }
 
   // Product shot
@@ -228,27 +279,12 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
 
   .okie-shot-frame {
     position: relative;
+    width: 1040px;
+    box-sizing: border-box;
     border-radius: 14px;
-    background:
-      radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.18), transparent 42%),
-      $okie-blue;
-    padding: clamp(20px, 5%, 44px) clamp(20px, 5%, 44px) 0;
+    background-color: $okie-blue;
+    padding: 44px 44px 0;
     overflow: hidden;
-    container-type: inline-size;
-  }
-
-  .okie-shot-rings {
-    position: absolute;
-    inset: -40% -10% auto;
-    height: 140%;
-    background:
-      repeating-radial-gradient(
-        circle at 70% 10%,
-        rgba(255, 255, 255, 0.16) 0 1px,
-        transparent 1px 28px
-      );
-    opacity: 0.45;
-    pointer-events: none;
   }
 
   .okie-shot-watermark {
@@ -268,7 +304,8 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
 
   .okie-window {
     position: relative;
-    font-size: min(#{$shot-base}px, #{math.div(100 * $shot-base, $shot-width)}cqw);
+    // Fixed desktop type size — ScaleFrame handles mobile miniaturization.
+    font-size: #{$shot-base}px;
     border-radius: shot-em(12) shot-em(12) 0 0;
     background-color: $okie-strong;
     color: $ui-ink;
@@ -286,6 +323,13 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     border-bottom: 1px solid $ui-line;
     background-color: $ui-surface;
     font-size: shot-em(12);
+  }
+
+  .okie-window-bar-simple {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0;
   }
 
   .okie-window-lights {
@@ -310,11 +354,13 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     }
   }
 
-  .okie-window-brand {
-    display: flex;
-    align-items: center;
-    gap: shot-em(8);
-    min-width: 0;
+  .okie-window-title {
+    justify-self: center;
+    white-space: nowrap;
+  }
+
+  .okie-window-repo {
+    color: $ui-muted;
   }
 
   .okie-window-mark {
@@ -333,32 +379,13 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     flex-shrink: 0;
   }
 
-  .okie-window-crumb {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 500;
-  }
-
   .okie-window-slash {
     color: $ui-faint;
     font-weight: 400;
   }
 
-  .okie-window-bar-end {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: shot-em(14);
-    flex-shrink: 0;
-  }
-
-  .okie-window-link {
-    color: $ui-muted;
-  }
-
   .okie-window-sync {
-    margin-left: auto;
+    justify-self: end;
     display: flex;
     align-items: center;
     gap: shot-em(6);
@@ -374,33 +401,30 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     flex-shrink: 0;
   }
 
-  .okie-window-body {
+  .okie-window-body-shot {
     display: grid;
-    grid-template-columns: minmax(0, shot-em(168)) minmax(0, 1.4fr) minmax(0, shot-em(210));
+    grid-template-columns: minmax(0, shot-em(150)) minmax(0, 1fr);
     align-items: stretch;
-    background-color: $ui-surface;
+    background-color: $okie-strong;
   }
 
   .okie-sidebar {
     border-right: 1px solid $ui-line;
-    padding: shot-em(10) shot-em(8);
+    padding: shot-em(10) shot-em(6) 0;
     display: flex;
     flex-direction: column;
-    gap: shot-em(10);
+    gap: shot-em(2);
     font-size: shot-em(11);
     background-color: $okie-strong;
     min-width: 0;
+    min-height: 0;
   }
 
   .okie-workspace-switch {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    gap: shot-em(8);
-    padding: shot-em(7) shot-em(8);
-    border-radius: shot-em(7);
-    border: 1px solid $ui-line;
-    background-color: $ui-surface;
+    align-items: center;
+    padding: shot-em(4) shot-em(8) shot-em(8);
     font-weight: 500;
   }
 
@@ -417,135 +441,97 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     line-height: 1;
   }
 
-  .okie-sidebar-group {
+  .okie-sidebar-label {
     display: flex;
-    flex-direction: column;
-    gap: shot-em(2);
+    align-items: center;
+    justify-content: space-between;
+    padding: shot-em(7) shot-em(8);
+    border-radius: shot-em(6);
   }
 
-  .okie-sidebar-heading {
+  .okie-sidebar-label-text {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: shot-em(8);
-    padding: shot-em(4) shot-em(8);
+    gap: shot-em(6);
     font-size: shot-em(9);
     letter-spacing: 0.08em;
     color: $ui-muted;
+
+    svg {
+      flex-shrink: 0;
+    }
   }
 
   .okie-sidebar-count {
-    margin-left: shot-em(6);
+    font-size: shot-em(10);
+    color: $ui-muted;
     font-family: $mono;
-    letter-spacing: 0;
   }
 
   .okie-sidebar-action {
-    letter-spacing: 0;
-    color: $ui-body;
+    font-family:
+      'Poppins',
+      -apple-system,
+      BlinkMacSystemFont,
+      sans-serif;
     font-size: shot-em(10);
+    color: $ui-muted;
   }
 
   .okie-sidebar-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: shot-em(8);
     padding: shot-em(6) shot-em(8);
     border-radius: shot-em(6);
 
     &.is-active {
-      background-color: $ui-fill;
-    }
-
-    .okie-mono {
-      color: $ui-muted;
+      background-color: $ui-line-soft;
     }
   }
 
-  .okie-sidebar-navs {
-    display: flex;
-    flex-direction: column;
-    gap: shot-em(2);
-    margin-top: shot-em(4);
+  .okie-sidebar-row-spaced {
+    margin-bottom: shot-em(6);
   }
 
   .okie-sidebar-nav {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: shot-em(8);
+    justify-content: space-between;
     padding: shot-em(7) shot-em(8);
     border-radius: shot-em(6);
-    color: $ui-body;
 
     &.is-active {
-      background-color: $ui-fill;
-      color: $ui-ink;
+      background-color: $ui-line-soft;
     }
   }
 
   .okie-sidebar-nav-label {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: shot-em(8);
-    min-width: 0;
+    gap: shot-em(6);
+    font-size: shot-em(9);
+    letter-spacing: 0.08em;
+    color: $ui-muted;
+
+    svg {
+      flex-shrink: 0;
+      stroke: $ui-muted;
+    }
   }
 
-  .okie-sidebar-nav-icon {
-    display: inline-flex;
-    color: $ui-muted;
-    flex-shrink: 0;
-  }
-
-  .okie-sidebar-badge {
-    min-width: shot-em(18);
-    height: shot-em(18);
-    padding: 0 shot-em(5);
-    border-radius: 999px;
-    background-color: $ui-fill;
-    color: $ui-muted;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-family: $mono;
-    font-size: shot-em(10);
+  .okie-trial-badge {
+    margin-top: auto;
+    padding: shot-em(10) shot-em(8);
+    border-top: 1px solid $ui-line;
+    color: $okie-blue;
+    font-size: shot-em(11);
   }
 
   .okie-review {
-    position: relative;
-    padding: shot-em(16) shot-em(18) shot-em(28);
+    padding: shot-em(16) shot-em(18);
     display: flex;
     flex-direction: column;
     gap: shot-em(12);
     min-width: 0;
     background-color: $okie-strong;
-    border-right: 1px solid $ui-line;
-  }
-
-  .okie-trial-badge {
-    position: absolute;
-    left: shot-em(18);
-    bottom: shot-em(10);
-    font-size: shot-em(11);
-    font-weight: 500;
-    color: $okie-blue;
-  }
-
-  .okie-panel {
-    padding: shot-em(14) shot-em(12);
-    display: flex;
-    flex-direction: column;
-    gap: shot-em(10);
-    min-width: 0;
-    background-color: $ui-surface;
-    font-size: shot-em(11);
-  }
-
-  .okie-panel-label {
-    font-size: shot-em(9);
-    letter-spacing: 0.08em;
-    color: $ui-muted;
   }
 
   .okie-review-back {
@@ -561,7 +547,7 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   }
 
   .okie-badge-critical {
-    padding: shot-em(3, 11) shot-em(8, 11);
+    padding: shot-em(3) shot-em(8);
     border-radius: 999px;
     background-color: #fde8e8;
     color: $ui-critical;
@@ -589,8 +575,8 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   }
 
   .okie-review-start {
-    padding: shot-em(7, 11) shot-em(11, 11);
-    border-radius: shot-em(7, 11);
+    padding: shot-em(7) shot-em(11);
+    border-radius: shot-em(7);
     background-color: $okie-blue;
     color: $okie-strong;
     font-size: shot-em(11);
@@ -620,6 +606,20 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
       font-weight: 500;
       border-bottom: 2px solid $ui-ink;
     }
+  }
+
+  .okie-review-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: shot-em(12);
+    align-items: start;
+  }
+
+  .okie-review-col {
+    display: flex;
+    flex-direction: column;
+    gap: shot-em(12);
+    min-width: 0;
   }
 
   .okie-card {
@@ -752,13 +752,16 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     border-radius: shot-em(8, 11);
     border: 1px solid $ui-line;
     line-height: 1.4;
+    background-color: $okie-strong;
 
     &.is-critical {
       border-color: $ui-critical;
+      background-color: $ui-surface;
     }
 
     &.is-changed {
       border-color: $ui-warn;
+      background-color: $ui-surface;
     }
   }
 
@@ -796,7 +799,7 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding-top: 32px;
+    padding-top: 24px;
     border-top: 1px solid $okie-rule;
   }
 
@@ -806,17 +809,18 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     line-height: 1.35;
     color: $okie-text;
     text-wrap: pretty;
+
+    span {
+      color: $okie-strong;
+    }
   }
 
-  // How a review works
+  // How a review works — stays in the 720px content column
 
   .okie-how {
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    width: min(1040px, calc(100vw - 2 * clamp(20px, 6vw, 80px)));
-    margin-left: 50%;
-    transform: translateX(-50%);
+    gap: 32px;
   }
 
   .okie-divider {
@@ -841,80 +845,83 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   .okie-divider-count {
     font-size: 13px;
     color: $okie-faint;
-    font-family: $mono;
   }
 
   .okie-how-layout {
-    display: grid;
-    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
-    gap: 28px 36px;
-    align-items: start;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: flex-start;
   }
 
   .okie-how-steps {
     list-style: none;
     margin: 0;
     padding: 0;
+    flex: 1 1 220px;
+    min-width: 0;
     display: flex;
     flex-direction: column;
   }
 
-  .okie-how-steps > li {
-    border-bottom: 1px solid $okie-rule;
-
-    &:last-child {
-      border-bottom: 0;
-    }
-  }
-
   .okie-how-step {
-    width: 100%;
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    text-align: left;
-    padding: 18px 12px 18px 14px;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    color: $okie-faint;
+    all: unset;
+    box-sizing: border-box;
     cursor: pointer;
     position: relative;
+    display: flex;
+    gap: 16px;
+    padding: 16px 0 16px 14px;
+    border-top: 1px solid $okie-rule;
+    border-left: 2px solid transparent;
+    opacity: 0.55;
     transition:
-      background-color 0.2s ease,
-      color 0.2s ease;
-
-    &:hover {
-      color: $okie-muted;
-    }
+      opacity 0.2s,
+      border-color 0.2s;
+    width: 100%;
 
     &.is-active {
-      color: $okie-text;
-      background-color: #1c1c1c;
-      border-radius: 10px;
-      box-shadow: inset 3px 0 0 $okie-blue;
+      opacity: 1;
+      border-left-color: $okie-border;
 
       .okie-how-step-title {
         color: $okie-strong;
       }
 
       .okie-how-step-body {
-        color: $okie-text;
-      }
-
-      .okie-how-step-number {
-        color: $okie-strong;
+        color: $okie-muted;
       }
     }
   }
 
+  .okie-how-progress {
+    position: absolute;
+    left: -2px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: $okie-blue;
+    transform-origin: top;
+    animation: okieProgress 4500ms linear forwards;
+
+    &.is-paused {
+      animation: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .okie-how-progress {
+      animation: none;
+    }
+  }
+
   .okie-how-step-number {
-    font-family: $mono;
-    font-size: 13px;
-    line-height: 1.4;
-    color: inherit;
+    font-family: 'Merriweather', Georgia, serif;
+    font-style: italic;
+    color: $okie-faint;
+    font-size: 17px;
+    width: 14px;
     flex-shrink: 0;
-    min-width: 1.2em;
   }
 
   .okie-how-step-copy {
@@ -925,108 +932,79 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   }
 
   .okie-how-step-title {
-    font-size: 16px;
-    font-weight: 500;
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
     line-height: 1.3;
-    color: inherit;
+    color: $okie-strong;
   }
 
   .okie-how-step-body {
-    font-size: 14px;
-    line-height: 1.45;
-    color: inherit;
+    font-size: 15px;
+    line-height: 1.55;
+    color: $okie-muted;
   }
 
   .okie-how-stage {
+    flex: 1.6 1 420px;
     min-width: 0;
-  }
-
-  .okie-how-frame {
     position: relative;
     border-radius: 14px;
-    background:
-      radial-gradient(circle at 58% 0%, rgba(255, 255, 255, 0.2), transparent 40%),
-      $okie-blue;
-    padding: 20px 20px 0;
-    overflow: hidden;
-    container-type: inline-size;
-    min-height: 520px;
+    background-color: $okie-blue;
+    // Visible so card shadows aren't clipped into a fake bottom fade; the
+    // page-level overflow-x:hidden still prevents sideways scroll.
+    overflow: visible;
+    padding: 28px;
+    box-sizing: border-box;
+  }
 
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 96px;
-      background: linear-gradient(to bottom, rgba(43, 75, 214, 0), rgba(23, 23, 23, 0.55) 70%, $okie-bg);
-      pointer-events: none;
-      z-index: 2;
+  .okie-how-stage-stack {
+    display: grid;
+    width: 100%;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .okie-how-stage-pane {
+    grid-area: 1 / 1;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    pointer-events: none;
+
+    &.is-active {
+      visibility: visible;
+      pointer-events: auto;
     }
   }
 
-  .okie-window-how {
+  .okie-stage-card {
     position: relative;
-    z-index: 1;
-    border-radius: shot-em(12) shot-em(12) 0 0;
-    border-bottom: 0;
-    font-size: min(#{$shot-base}px, #{math.div(100 * $shot-base, 520)}cqw);
-  }
-
-  .okie-wf-pipeline-solo {
-    border-right: 0;
-    padding-bottom: shot-em(56);
-  }
-
-  .okie-mock-panel {
-    border: 0;
-    border-radius: 0;
-    min-height: 320px;
-    padding: 20px;
-  }
-
-  .okie-wf-node.is-danger .okie-wf-node-icon.is-danger {
-    color: $ui-critical;
-    background-color: #fde8e8;
-  }
-
-  .okie-steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-  }
-
-  .okie-step {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .okie-mock {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 460px;
+    // No drop shadow — a soft shadow over the blue stage reads as the old
+    // blue-to-black fade when clipped, and isn't needed for the mock cards.
+    box-shadow: none;
     border-radius: 12px;
     background-color: $okie-strong;
     color: $ui-ink;
     border: 1px solid $ui-line;
-    padding: 18px;
-    min-height: 250px;
+    padding: 22px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    font-size: 12px;
-    overflow: hidden;
+    font-size: 13px;
+    overflow: visible;
 
-    // inside a step mock the flow steps are at the mock's own scale
     .okie-flow-step {
       gap: 10px;
       padding: 8px 10px;
       border-radius: 8px;
-      background-color: $okie-strong;
-      font-size: 12px;
-    }
-
-    .okie-flow-step.is-critical,
-    .okie-flow-step.is-changed {
-      background-color: $ui-surface;
+      font-size: 13px;
+      line-height: 1.4;
     }
 
     .okie-flow-tag {
@@ -1038,6 +1016,190 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
       margin: -4px 0;
       color: $ui-faint;
     }
+
+    .okie-tabs {
+      font-size: 12px;
+      gap: 14px;
+    }
+
+    .okie-dot-live {
+      width: 6px;
+      height: 6px;
+    }
+  }
+
+  .okie-stage-card-wf {
+    max-width: none;
+    width: 100%;
+    padding: 0;
+    background-color: $ui-surface;
+    box-shadow: none;
+    overflow: hidden; // keep window chrome corners clean
+  }
+
+  .okie-wf-mini-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid $ui-line;
+    background-color: $okie-strong;
+
+    .okie-window-lights {
+      gap: 6px;
+
+      span {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .okie-window-mark {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      font-size: 12px;
+    }
+  }
+
+  .okie-wf-mini-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+
+    .okie-window-slash {
+      color: #c9c9c9;
+    }
+
+    .okie-mono {
+      color: $ui-muted;
+    }
+  }
+
+  .okie-wf-mini-body {
+    padding: 20px 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .okie-wf-pipeline-title {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  .okie-wf-pipeline-sub {
+    font-size: 13px;
+    color: $ui-muted;
+    margin-top: 4px;
+  }
+
+  .okie-wf-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    border: 1px solid $ui-line;
+    background-color: $okie-strong;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    margin: 20px auto 0;
+    color: $ui-body;
+  }
+
+  .okie-wf-node {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid $ui-line;
+    background-color: $okie-strong;
+    margin-top: 14px;
+  }
+
+  .okie-wf-node-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background-color: $ui-fill;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: $ui-body;
+
+    &.is-danger {
+      background-color: #fde8e8;
+      color: $ui-critical;
+    }
+
+    &.is-queue {
+      font-size: 16px;
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .okie-wf-node-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .okie-wf-node-title {
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .okie-wf-wait {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: $ui-line-soft;
+    font-size: 11px;
+    color: $ui-body;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .okie-wf-node-detail {
+    font-size: 13px;
+    color: $ui-muted;
+  }
+
+  .okie-wf-count {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: $ui-fill;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: $ui-body;
+    flex-shrink: 0;
+  }
+
+  .okie-wf-route {
+    align-self: center;
+    margin: 12px auto;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background-color: $ui-line-soft;
+    font-size: 12px;
+    color: $ui-muted;
+    white-space: nowrap;
+    text-align: center;
   }
 
   .okie-mock-head {
@@ -1062,11 +1224,6 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     display: flex;
     align-items: center;
     gap: 6px;
-
-    .okie-dot-live {
-      width: 6px;
-      height: 6px;
-    }
   }
 
   .okie-mock-label {
@@ -1091,16 +1248,22 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     font-size: 11px;
   }
 
-  // in the step mock the underline hangs off the container's own padding, so
-  // only the active tab carries the padding that the product shot puts on both
   .okie-tabs-mock {
     padding-bottom: 6px;
+    border-bottom: 1px solid $ui-line;
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
 
     span {
+      color: $ui-muted;
       padding-bottom: 0;
     }
 
     .is-active {
+      color: inherit;
+      font-weight: 500;
+      border-bottom: 2px solid $ui-ink;
       margin-bottom: -7px;
       padding-bottom: 6px;
     }
@@ -1215,6 +1378,7 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
 
   .okie-mock-actions {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
     gap: 8px;
     margin-top: auto;
@@ -1223,12 +1387,15 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
   .okie-action-skip {
     color: $ui-muted;
     padding: 6px 8px;
+    white-space: nowrap;
   }
 
   .okie-action-ghost {
     padding: 6px 11px;
     border-radius: 7px;
     border: 1px solid $ui-line;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .okie-action-primary {
@@ -1236,12 +1403,16 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     border-radius: 7px;
     background-color: $okie-blue;
     color: $okie-strong;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .okie-action-pill {
     padding: 6px 11px;
     border-radius: 999px;
     border: 1px solid $ui-line;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .okie-action-pill-primary {
@@ -1249,6 +1420,8 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     border-radius: 999px;
     background-color: $okie-blue;
     color: $okie-strong;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .okie-summary {
@@ -1279,447 +1452,6 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     color: $ui-ok;
     white-space: nowrap;
     font-size: 11px;
-  }
-
-  .okie-step-text {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    p {
-      margin: 0;
-      font-size: 15px;
-      line-height: 1.55;
-      color: $okie-muted;
-    }
-  }
-
-  .okie-step-title {
-    font-size: 17px;
-    font-weight: 600;
-    color: $okie-strong;
-  }
-
-  .okie-step-number {
-    font-family: 'Merriweather', Georgia, serif;
-    font-style: italic;
-    font-weight: 400;
-    color: $okie-faint;
-    margin-right: 8px;
-  }
-
-  // Automated workflows
-
-  .okie-workflows {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-  }
-
-  .okie-workflows-lede {
-    margin: 0;
-    font-size: 17px;
-    line-height: 1.55;
-    color: $okie-muted;
-    max-width: 560px;
-    text-wrap: pretty;
-  }
-
-  .okie-workflows-frame {
-    width: min(1040px, calc(100vw - 2 * clamp(20px, 6vw, 80px)));
-    margin-left: 50%;
-    transform: translateX(-50%);
-    container-type: inline-size;
-  }
-
-  .okie-window-workflows {
-    border-radius: 12px;
-    border-bottom: 1px solid $ui-line;
-  }
-
-  .okie-wf-pipeline {
-    padding: shot-em(18) shot-em(20);
-    display: flex;
-    flex-direction: column;
-    gap: shot-em(14);
-    min-width: 0;
-    background-color: $okie-strong;
-    border-right: 1px solid $ui-line;
-  }
-
-  .okie-wf-pipeline-head {
-    display: flex;
-    flex-direction: column;
-    gap: shot-em(4);
-  }
-
-  .okie-wf-pipeline-title {
-    font-size: shot-em(16);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
-  .okie-wf-pipeline-sub {
-    font-size: shot-em(12);
-    color: $ui-muted;
-    line-height: 1.4;
-  }
-
-  .okie-wf-rail {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: shot-em(8);
-    padding-left: shot-em(14);
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: shot-em(5);
-      top: shot-em(18);
-      bottom: shot-em(28);
-      width: 1px;
-      background-color: $ui-line;
-    }
-  }
-
-  .okie-wf-trigger,
-  .okie-wf-node,
-  .okie-wf-route,
-  .okie-wf-add {
-    position: relative;
-    animation: okie-wf-rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  }
-
-  .okie-wf-trigger {
-    align-self: flex-start;
-    display: inline-flex;
-    align-items: center;
-    gap: shot-em(8);
-    padding: shot-em(7) shot-em(12);
-    border-radius: 999px;
-    border: 1px solid $ui-line;
-    background-color: $okie-strong;
-    font-size: shot-em(12);
-    font-weight: 500;
-    box-shadow: 0 shot-em(1) shot-em(2) rgba(0, 0, 0, 0.04);
-    animation-delay: 0.02s;
-  }
-
-  .okie-wf-node {
-    display: flex;
-    align-items: center;
-    gap: shot-em(10);
-    padding: shot-em(10) shot-em(12);
-    border-radius: shot-em(10);
-    border: 1px solid $ui-line;
-    background-color: $okie-strong;
-    box-shadow: 0 shot-em(1) shot-em(2) rgba(0, 0, 0, 0.03);
-
-    &:nth-of-type(1) {
-      animation-delay: 0.08s;
-    }
-    &:nth-of-type(2) {
-      animation-delay: 0.14s;
-    }
-    &:nth-of-type(3) {
-      animation-delay: 0.28s;
-    }
-    &:nth-of-type(4) {
-      animation-delay: 0.34s;
-    }
-  }
-
-  .okie-wf-node-icon {
-    width: shot-em(28);
-    height: shot-em(28);
-    border-radius: shot-em(8);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background-color: $ui-fill;
-    color: $ui-body;
-
-    &.is-queue {
-      color: $okie-blue;
-      background-color: #eef2ff;
-    }
-  }
-
-  .okie-wf-node-body {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: shot-em(2);
-  }
-
-  .okie-wf-node-title {
-    display: flex;
-    align-items: center;
-    gap: shot-em(6);
-    flex-wrap: wrap;
-    font-weight: 500;
-    font-size: shot-em(12);
-    line-height: 1.3;
-  }
-
-  .okie-wf-wait {
-    padding: shot-em(1) shot-em(6);
-    border-radius: 999px;
-    background-color: $ui-fill;
-    color: $ui-muted;
-    font-size: shot-em(10);
-    font-weight: 400;
-  }
-
-  .okie-wf-node-detail {
-    color: $ui-muted;
-    font-size: shot-em(11);
-    line-height: 1.35;
-  }
-
-  .okie-wf-count {
-    min-width: shot-em(20);
-    height: shot-em(20);
-    padding: 0 shot-em(6);
-    border-radius: 999px;
-    background-color: $ui-fill;
-    color: $ui-body;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: shot-em(11);
-    font-family: $mono;
-    flex-shrink: 0;
-  }
-
-  .okie-wf-route {
-    align-self: center;
-    margin: shot-em(2) 0;
-    padding: shot-em(2) shot-em(8);
-    font-size: shot-em(11);
-    color: $ui-muted;
-    background-color: $okie-strong;
-    animation-delay: 0.2s;
-  }
-
-  .okie-wf-add {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: shot-em(10);
-    border-radius: shot-em(10);
-    border: 1px dashed #d4d4d4;
-    color: $ui-muted;
-    font-size: shot-em(12);
-    animation-delay: 0.4s;
-  }
-
-  .okie-wf-build {
-    padding: shot-em(16) shot-em(14);
-    display: flex;
-    flex-direction: column;
-    gap: shot-em(10);
-    min-width: 0;
-    background-color: $ui-surface;
-  }
-
-  .okie-wf-build-eyebrow {
-    font-size: shot-em(9);
-    letter-spacing: 0.1em;
-    color: $ui-muted;
-  }
-
-  .okie-wf-build-title {
-    font-size: shot-em(15);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
-  .okie-wf-build-note,
-  .okie-wf-build-foot {
-    margin: 0;
-    font-size: shot-em(11);
-    line-height: 1.45;
-    color: $ui-muted;
-  }
-
-  .okie-wf-build-foot {
-    margin-top: auto;
-    padding-top: shot-em(8);
-  }
-
-  .okie-wf-blocks {
-    display: flex;
-    flex-direction: column;
-    gap: shot-em(8);
-    margin-top: shot-em(4);
-  }
-
-  .okie-wf-block {
-    display: flex;
-    align-items: flex-start;
-    gap: shot-em(10);
-    padding: shot-em(11) shot-em(12);
-    border-radius: shot-em(10);
-    border: 1px solid $ui-line;
-    background-color: $okie-strong;
-    animation: okie-wf-rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-
-    &.is-wait {
-      animation-delay: 0.16s;
-    }
-    &.is-comment {
-      animation-delay: 0.24s;
-    }
-    &.is-approve {
-      animation-delay: 0.32s;
-    }
-  }
-
-  .okie-wf-block-icon {
-    width: shot-em(28);
-    height: shot-em(28);
-    border-radius: shot-em(8);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background-color: $ui-fill;
-    color: $ui-muted;
-
-    &.is-comment {
-      color: #2563eb;
-      background-color: #eff6ff;
-    }
-
-    &.is-approve {
-      color: $ui-ok;
-      background-color: #ecfdf3;
-    }
-  }
-
-  .okie-wf-block-body {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: shot-em(2);
-  }
-
-  .okie-wf-block-title {
-    font-weight: 500;
-    font-size: shot-em(12);
-  }
-
-  .okie-wf-block-detail {
-    color: $ui-muted;
-    font-size: shot-em(11);
-    line-height: 1.4;
-  }
-
-  @keyframes okie-wf-rise {
-    from {
-      opacity: 0;
-      transform: translateY(6px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .okie-wf-trigger,
-    .okie-wf-node,
-    .okie-wf-route,
-    .okie-wf-add,
-    .okie-wf-block {
-      animation: none;
-    }
-  }
-
-  @container (max-width: 720px) {
-    .okie-window-body {
-      grid-template-columns: minmax(0, shot-em(140)) minmax(0, 1fr);
-    }
-
-    .okie-panel,
-    .okie-wf-build {
-      display: none;
-    }
-
-    .okie-review,
-    .okie-wf-pipeline {
-      border-right: 0;
-    }
-  }
-
-  @container (max-width: 520px) {
-    .okie-window-body {
-      grid-template-columns: 1fr;
-    }
-
-    .okie-sidebar {
-      display: none;
-    }
-
-    .okie-window-link {
-      display: none;
-    }
-  }
-
-  // Local and private
-
-  .okie-local {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 40px;
-    padding-top: 24px;
-    border-top: 1px solid $okie-rule;
-  }
-
-  .okie-local-col {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    p {
-      margin: 0;
-      font-size: 17px;
-      line-height: 1.55;
-      color: $okie-text;
-      text-wrap: pretty;
-    }
-  }
-
-  // Who it's for
-
-  .okie-for {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .okie-for-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 24px;
-    font-size: 16px;
-    line-height: 1.5;
-  }
-
-  .okie-for-card {
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid $okie-rule;
-    color: $okie-muted;
-
-    span {
-      color: $okie-strong;
-    }
   }
 
   // Download
@@ -1768,13 +1500,20 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     }
   }
 
-  .okie-download-note {
+  .okie-download-actions {
     position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .okie-download-note {
+    flex: 1 1 180px;
     margin: 0;
     font-size: 13px;
     line-height: 1.5;
-    color: rgba(255, 255, 255, 0.75);
-    max-width: 460px;
+    color: rgba(255, 255, 255, 0.8);
   }
 
   // Footer
@@ -1824,20 +1563,18 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     }
   }
 
-  @media (max-width: 900px) {
-    .okie-how-layout {
-      grid-template-columns: 1fr;
-      gap: 24px;
-    }
-
-    .okie-how-frame {
-      padding: 16px 16px 0;
+  @media (max-width: 720px) {
+    .okie-how-stage {
+      flex-basis: 100%;
+      // Height comes from ScaleFrame / stacked panes — no fixed leftover gap.
+      height: auto;
+      padding: 20px;
     }
   }
 
   @media (max-width: 640px) {
     .okie-actions-note {
-      width: 100%;
+      flex-basis: 100%;
     }
 
     .okie-divider-title {
@@ -1845,15 +1582,7 @@ $shot-width: 952; // the 1040px frame at its design size, less its 44px padding
     }
 
     .okie-how-step {
-      padding: 12px;
-    }
-
-    .okie-window-body {
-      grid-template-columns: minmax(0, shot-em(140)) minmax(0, 1fr);
-    }
-
-    .okie-panel {
-      display: none;
+      padding: 14px 0 14px 12px;
     }
   }
 }
