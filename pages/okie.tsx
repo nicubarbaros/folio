@@ -66,6 +66,53 @@ const completedUnits = [
 
 const toneLabel: Partial<Record<Tone, string>> = { critical: 'new', changed: 'changed' };
 
+const workflowLanes = [
+  {
+    kind: 'inbox' as const,
+    title: 'All review requests in Default',
+    detail: 'Enters the workflow',
+    count: '3'
+  },
+  {
+    kind: 'queue' as const,
+    title: 'Queue',
+    detail: 'Categorize first, then analyze',
+    count: '0'
+  },
+  {
+    kind: 'lane' as const,
+    title: 'Critical',
+    badge: 'Wait',
+    detail: 'Auto created',
+    count: '3'
+  },
+  {
+    kind: 'lane' as const,
+    title: 'Default',
+    badge: 'Wait',
+    detail: 'Every PR not caught above',
+    count: '0'
+  }
+];
+
+const workflowActions = [
+  {
+    kind: 'wait' as const,
+    title: 'Wait for me',
+    detail: 'Just sort it into the lane'
+  },
+  {
+    kind: 'comment' as const,
+    title: 'Comment findings',
+    detail: 'Post the triage as a review'
+  },
+  {
+    kind: 'approve' as const,
+    title: 'Approve when safe',
+    detail: 'Approve past the safety gate'
+  }
+];
+
 function AppleLogo() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -89,22 +136,89 @@ function DownloadCta({ variant }: { variant: 'primary' | 'invert' }) {
   );
 }
 
-function SidebarGroup({ label, count, children }: { label: string; count: number; children: React.ReactNode }) {
+function SidebarGroup({
+  label,
+  count,
+  action,
+  children
+}: {
+  label: string;
+  count?: number;
+  action?: string;
+  children?: React.ReactNode;
+}) {
   return (
-    <>
+    <div className="okie-sidebar-group">
       <div className="okie-sidebar-heading">
-        {label} <span>{count}</span>
+        <span>
+          {label}
+          {typeof count === 'number' && <span className="okie-sidebar-count">{count}</span>}
+        </span>
+        {action && <span className="okie-sidebar-action">{action}</span>}
       </div>
       {children}
-    </>
+    </div>
   );
 }
 
 function SidebarRow({ label, count, active }: { label: string; count?: number; active?: boolean }) {
   return (
     <div className={`okie-sidebar-row${active ? ' is-active' : ''}`}>
-      <span>{label}</span>
-      <span className="okie-mono">{count}</span>
+      <span className="okie-truncate">{label}</span>
+      {typeof count === 'number' && <span className="okie-mono">{count}</span>}
+    </div>
+  );
+}
+
+function AppSidebar({ workflowActive = false }: { workflowActive?: boolean }) {
+  return (
+    <aside className="okie-sidebar">
+      <div className="okie-workspace-switch">
+        <span className="okie-workspace-name">Default</span>
+        <span className="okie-workspace-caret" aria-hidden="true">
+          ▾
+        </span>
+      </div>
+
+      <SidebarGroup label="REPOS">
+        <SidebarRow label="All repositories" active={!workflowActive} />
+        <SidebarRow label="partners" />
+        <SidebarRow label="planable-app" />
+      </SidebarGroup>
+
+      <SidebarGroup label="INBOX" count={3} />
+      <SidebarGroup label="TRACKED" count={2} />
+
+      <SidebarGroup label="WORKFLOWS" action="Add">
+        <SidebarRow label="Default" active={workflowActive} />
+      </SidebarGroup>
+    </aside>
+  );
+}
+
+function AppTopBar() {
+  return (
+    <div className="okie-window-bar">
+      <div className="okie-window-lights" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="okie-window-brand">
+        <span className="okie-window-mark" aria-hidden="true">
+          O
+        </span>
+        <span className="okie-window-crumb">
+          Okie <span className="okie-window-slash">/</span> Default
+        </span>
+      </div>
+      <div className="okie-window-bar-end">
+        <span className="okie-window-link">Experiments</span>
+        <div className="okie-window-sync">
+          <span className="okie-dot-live" />
+          Synced
+        </div>
+      </div>
     </div>
   );
 }
@@ -128,6 +242,85 @@ function Flow({ steps }: { steps: Array<{ label: string; tone: Tone }> }) {
         </React.Fragment>
       ))}
     </>
+  );
+}
+
+function WorkflowIcon({ kind }: { kind: 'inbox' | 'queue' | 'lane' | 'wait' | 'comment' | 'approve' | 'play' }) {
+  switch (kind) {
+    case 'play':
+      return (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+          <path d="M3.2 1.6v8.8l7.2-4.4-7.2-4.4z" />
+        </svg>
+      );
+    case 'inbox':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M4 13h4l2 3h4l2-3h4v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5z" />
+          <path d="M4 13l2.5-8h11L20 13" />
+        </svg>
+      );
+    case 'queue':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M12 3l1.8 4.6L18.5 9l-3.6 3.2.9 4.8L12 14.8 8.2 17l.9-4.8L5.5 9l4.7-1.4L12 3z" />
+        </svg>
+      );
+    case 'lane':
+    case 'wait':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <circle cx="12" cy="12" r="8" />
+          <path d="M12 8v5l3 2" />
+        </svg>
+      );
+    case 'comment':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v6A2.5 2.5 0 0 1 16.5 15H11l-4 3.5V15H7.5A2.5 2.5 0 0 1 5 12.5v-6z" />
+        </svg>
+      );
+    case 'approve':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <circle cx="12" cy="12" r="8" />
+          <path d="M8.5 12.2l2.3 2.3 4.7-4.8" />
+        </svg>
+      );
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+function WorkflowNode({
+  kind,
+  title,
+  detail,
+  count,
+  badge
+}: {
+  kind: 'inbox' | 'queue' | 'lane';
+  title: string;
+  detail: string;
+  count: string;
+  badge?: string;
+}) {
+  return (
+    <div className={`okie-wf-node is-${kind}`}>
+      <span className={`okie-wf-node-icon is-${kind}`}>
+        <WorkflowIcon kind={kind} />
+      </span>
+      <div className="okie-wf-node-body">
+        <div className="okie-wf-node-title">
+          {title}
+          {badge && <span className="okie-wf-wait">{badge}</span>}
+        </div>
+        <div className="okie-wf-node-detail">{detail}</div>
+      </div>
+      <span className="okie-wf-count">{count}</span>
+    </div>
   );
 }
 
@@ -175,46 +368,17 @@ const Okie: NextPage = () => {
             </div>
 
             <div className="okie-window">
-              <div className="okie-window-bar">
-                <div className="okie-window-lights" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <div>
-                  Okie <span className="okie-window-slash">/</span> <span className="okie-mono">netflix/web</span>
-                </div>
-                <div className="okie-window-sync">
-                  <span className="okie-dot-live" />
-                  Synced
-                </div>
-              </div>
+              <AppTopBar />
 
               <div className="okie-window-body">
-                <aside className="okie-sidebar">
-                  <SidebarGroup label="WORKSPACES" count={2}>
-                    <SidebarRow label="Netflix" active />
-                    <SidebarRow label="Personal" />
-                  </SidebarGroup>
-                  <SidebarGroup label="REPOS" count={3}>
-                    <SidebarRow label="All repositories" />
-                    <SidebarRow label="netflix/web" active />
-                    <SidebarRow label="netflix/playback-api" />
-                    <SidebarRow label="netflix/tv-ui" />
-                  </SidebarGroup>
-                  <SidebarGroup label="INBOX" count={4}>
-                    <SidebarRow label="Critical" count={1} />
-                    <SidebarRow label="High" count={1} />
-                    <SidebarRow label="Routine" count={2} />
-                  </SidebarGroup>
-                </aside>
+                <AppSidebar />
 
                 <main className="okie-review">
-                  <div className="okie-review-back">← Queue</div>
+                  <div className="okie-review-back">← Inbox</div>
 
                   <div className="okie-review-badges">
                     <span className="okie-badge-critical">Critical</span>
-                    <span className="okie-mono okie-review-ref">#481 · netflix/web</span>
+                    <span className="okie-mono okie-review-ref">#481 · planable-app</span>
                   </div>
 
                   <div className="okie-review-head">
@@ -234,61 +398,57 @@ const Okie: NextPage = () => {
                     <span>Map</span>
                   </div>
 
-                  <div className="okie-review-grid">
-                    <div className="okie-review-col">
-                      <div className="okie-card">
-                        <div className="okie-card-block">
-                          <div className="okie-card-title">What changed</div>
-                          <div className="okie-card-body">
-                            The continue-watching row now loads from a precomputed feed instead of querying playback
-                            history on render. Feed rebuilds run in a background job and failed rebuilds are retried.
-                          </div>
-                        </div>
-                        <div className="okie-card-block okie-card-block-split">
-                          <div className="okie-card-title">Why</div>
-                          <div className="okie-card-note">
-                            Profiles with long histories made the TV home render slow enough to miss the frame budget.
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="okie-card okie-card-tight">
-                        <div className="okie-card-head">
-                          <span className="okie-card-title">Meaningful changes</span>
-                          <span className="okie-card-count">142 files reduced to 4</span>
-                        </div>
-                        {meaningfulChanges.map((change, index) => (
-                          <div className="okie-change" key={change.label}>
-                            <span className={`okie-change-dot is-${change.tone}`} />
-                            <div className="okie-change-body">
-                              <div className="okie-change-label">
-                                {index + 1}. {change.label}
-                              </div>
-                              <div className="okie-change-desc">{change.description}</div>
-                            </div>
-                            <span className="okie-mono okie-change-files">{change.files}</span>
-                          </div>
-                        ))}
+                  <div className="okie-card">
+                    <div className="okie-card-block">
+                      <div className="okie-card-title">What changed</div>
+                      <div className="okie-card-body">
+                        The continue-watching row now loads from a precomputed feed instead of querying playback
+                        history on render. Feed rebuilds run in a background job and failed rebuilds are retried.
                       </div>
                     </div>
-
-                    <div className="okie-review-col">
-                      <div className="okie-card okie-card-small">
-                        <div className="okie-card-title okie-card-title-flow">Architecture affected</div>
-                        <Flow steps={architectureSteps} />
-                      </div>
-
-                      <div className="okie-card okie-card-small">
-                        <div className="okie-card-title">Risk areas</div>
-                        <div className="okie-chips">
-                          <span>Concurrency</span>
-                          <span>Error handling</span>
-                          <span>Data</span>
-                        </div>
+                    <div className="okie-card-block okie-card-block-split">
+                      <div className="okie-card-title">Why</div>
+                      <div className="okie-card-note">
+                        Profiles with long histories made the TV home render slow enough to miss the frame budget.
                       </div>
                     </div>
                   </div>
+
+                  <div className="okie-card okie-card-tight">
+                    <div className="okie-card-head">
+                      <span className="okie-card-title">Meaningful changes</span>
+                      <span className="okie-card-count">142 files reduced to 4</span>
+                    </div>
+                    {meaningfulChanges.map((change, index) => (
+                      <div className="okie-change" key={change.label}>
+                        <span className={`okie-change-dot is-${change.tone}`} />
+                        <div className="okie-change-body">
+                          <div className="okie-change-label">
+                            {index + 1}. {change.label}
+                          </div>
+                          <div className="okie-change-desc">{change.description}</div>
+                        </div>
+                        <span className="okie-mono okie-change-files">{change.files}</span>
+                      </div>
+                    ))}
+                  </div>
                 </main>
+
+                <aside className="okie-panel">
+                  <div className="okie-panel-label">Context</div>
+                  <div className="okie-card okie-card-small">
+                    <div className="okie-card-title okie-card-title-flow">Architecture affected</div>
+                    <Flow steps={architectureSteps} />
+                  </div>
+                  <div className="okie-card okie-card-small">
+                    <div className="okie-card-title">Risk areas</div>
+                    <div className="okie-chips">
+                      <span>Concurrency</span>
+                      <span>Error handling</span>
+                      <span>Data</span>
+                    </div>
+                  </div>
+                </aside>
               </div>
             </div>
           </div>
@@ -433,6 +593,75 @@ const Okie: NextPage = () => {
                 <p>
                   Your decisions post back as a real review, with a record of what you inspected and what you skipped.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="okie-workflows" id="workflows">
+          <div className="okie-divider">
+            <span className="okie-divider-title">Automated workflows</span>
+            <span className="okie-divider-rule" />
+            <span className="okie-divider-count">01</span>
+          </div>
+
+          <p className="okie-workflows-lede">
+            Each workspace sorts incoming review requests into lanes, then acts. Write an entry rule. Pick Wait,
+            Comment, or Approve.
+          </p>
+
+          <div className="okie-workflows-frame" aria-hidden="true">
+            <div className="okie-window okie-window-workflows">
+              <AppTopBar />
+
+              <div className="okie-window-body">
+                <AppSidebar workflowActive />
+
+                <div className="okie-wf-pipeline">
+                  <div className="okie-wf-pipeline-head">
+                    <div className="okie-wf-pipeline-title">Automated workflows</div>
+                    <div className="okie-wf-pipeline-sub">How Default sorts and acts on incoming pull requests.</div>
+                  </div>
+
+                  <div className="okie-wf-rail">
+                    <div className="okie-wf-trigger">
+                      <WorkflowIcon kind="play" />
+                      <span>A pull request needs your review</span>
+                    </div>
+
+                    <WorkflowNode {...workflowLanes[0]} />
+                    <WorkflowNode {...workflowLanes[1]} />
+
+                    <div className="okie-wf-route">then route to the first match</div>
+
+                    <WorkflowNode {...workflowLanes[2]} />
+                    <WorkflowNode {...workflowLanes[3]} />
+
+                    <div className="okie-wf-add">+ Add section</div>
+                  </div>
+                </div>
+
+                <aside className="okie-wf-build">
+                  <div className="okie-wf-build-eyebrow">BUILD</div>
+                  <div className="okie-wf-build-title">Add a block</div>
+                  <p className="okie-wf-build-note">Pick a block to start a new section, then write its entry rule.</p>
+
+                  <div className="okie-wf-blocks">
+                    {workflowActions.map(action => (
+                      <div className={`okie-wf-block is-${action.kind}`} key={action.title}>
+                        <span className={`okie-wf-block-icon is-${action.kind}`}>
+                          <WorkflowIcon kind={action.kind} />
+                        </span>
+                        <div className="okie-wf-block-body">
+                          <div className="okie-wf-block-title">{action.title}</div>
+                          <div className="okie-wf-block-detail">{action.detail}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="okie-wf-build-foot">Click any lane on the left to edit its rule and action.</p>
+                </aside>
               </div>
             </div>
           </div>
