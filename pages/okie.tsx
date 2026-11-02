@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -8,7 +8,11 @@ import Link from 'next/link';
 const downloadUrl = '';
 const ctaLabel = 'Download for Mac';
 
+// TODO: swap the test Lemon Squeezy checkout for the live Okie license product.
+const buyLicenseUrl = 'https://okie.lemonsqueezy.com/checkout/buy/a53f9af4-e179-4ae0-8ef8-a85872758f84';
+
 type Tone = 'critical' | 'changed' | 'plain';
+type HowStepId = 'inbox' | 'workflows' | 'brief' | 'guided' | 'approve';
 
 const meaningfulChanges: Array<{ label: string; description: string; files: string; tone: Tone }> = [
   {
@@ -66,6 +70,62 @@ const completedUnits = [
 
 const toneLabel: Partial<Record<Tone, string>> = { critical: 'new', changed: 'changed' };
 
+const howSteps: Array<{ id: HowStepId; number: string; title: string; body: string }> = [
+  {
+    id: 'inbox',
+    number: '1',
+    title: 'Inbox',
+    body: 'PRs waiting on you, sorted by how much attention they need.'
+  },
+  {
+    id: 'workflows',
+    number: '2',
+    title: 'Workflows',
+    body: 'New PRs land in sections. Routine ones get analyzed before you look.'
+  },
+  {
+    id: 'brief',
+    number: '3',
+    title: 'Brief',
+    body: 'What changed, why, and the files you can skip.'
+  },
+  {
+    id: 'guided',
+    number: '4',
+    title: 'Guided review',
+    body: 'One unit at a time, then a decision. Enter, C, J/K.'
+  },
+  {
+    id: 'approve',
+    number: '5',
+    title: 'Approve on GitHub',
+    body: 'Your decisions post back as a real review, with a record of what you inspected and what you skipped.'
+  }
+];
+
+const workflowLanes = [
+  {
+    kind: 'inbox' as const,
+    title: 'All review requests in Default',
+    detail: 'Enters the workflow',
+    count: '7'
+  },
+  {
+    kind: 'queue' as const,
+    title: 'Queue',
+    detail: 'Categorize first, then analyze',
+    count: '2'
+  },
+  {
+    kind: 'lane' as const,
+    title: 'Critical',
+    badge: 'Wait',
+    detail: 'Touches billing, auth or data deletion',
+    count: '3',
+    danger: true
+  }
+];
+
 function AppleLogo() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -89,22 +149,142 @@ function DownloadCta({ variant }: { variant: 'primary' | 'invert' }) {
   );
 }
 
-function SidebarGroup({ label, count, children }: { label: string; count: number; children: React.ReactNode }) {
+function NavIcon({ kind }: { kind: 'inbox' | 'tracked' | 'workflows' }) {
+  switch (kind) {
+    case 'inbox':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M4 13h4l2 3h4l2-3h4v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5z" />
+          <path d="M4 13l2.5-8h11L20 13" />
+        </svg>
+      );
+    case 'tracked':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
+        </svg>
+      );
+    case 'workflows':
+      return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <circle cx="6" cy="6" r="2.2" />
+          <circle cx="18" cy="6" r="2.2" />
+          <circle cx="12" cy="18" r="2.2" />
+          <path d="M8 6h8M6 8v4.5A3.5 3.5 0 0 0 9.5 16H12M18 8v4.5A3.5 3.5 0 0 1 14.5 16H12" />
+        </svg>
+      );
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+function SidebarGroup({
+  label,
+  action,
+  children
+}: {
+  label: string;
+  action?: string;
+  children?: React.ReactNode;
+}) {
   return (
-    <>
+    <div className="okie-sidebar-group">
       <div className="okie-sidebar-heading">
-        {label} <span>{count}</span>
+        <span>{label}</span>
+        {action && <span className="okie-sidebar-action">{action}</span>}
       </div>
       {children}
-    </>
+    </div>
   );
 }
 
-function SidebarRow({ label, count, active }: { label: string; count?: number; active?: boolean }) {
+function SidebarRow({ label, count, active }: { label: string; count?: number | string; active?: boolean }) {
   return (
     <div className={`okie-sidebar-row${active ? ' is-active' : ''}`}>
-      <span>{label}</span>
-      <span className="okie-mono">{count}</span>
+      <span className="okie-truncate">{label}</span>
+      {count !== undefined && <span className="okie-mono">{count}</span>}
+    </div>
+  );
+}
+
+function SidebarNavRow({
+  label,
+  kind,
+  count,
+  action,
+  active
+}: {
+  label: string;
+  kind: 'inbox' | 'tracked' | 'workflows';
+  count?: number | string;
+  action?: string;
+  active?: boolean;
+}) {
+  return (
+    <div className={`okie-sidebar-nav${active ? ' is-active' : ''}`}>
+      <span className="okie-sidebar-nav-label">
+        <span className="okie-sidebar-nav-icon">
+          <NavIcon kind={kind} />
+        </span>
+        {label}
+      </span>
+      {action ? (
+        <span className="okie-sidebar-action">{action}</span>
+      ) : (
+        count !== undefined && <span className="okie-sidebar-badge">{count}</span>
+      )}
+    </div>
+  );
+}
+
+function AppSidebar({ activeNav = 'repos' }: { activeNav?: 'repos' | 'workflows' }) {
+  return (
+    <aside className="okie-sidebar">
+      <div className="okie-workspace-switch">
+        <span className="okie-workspace-name">Default</span>
+        <span className="okie-workspace-caret" aria-hidden="true">
+          ▾
+        </span>
+      </div>
+
+      <SidebarGroup label="REPOS">
+        <SidebarRow label="All repositories" active={activeNav === 'repos'} />
+        <SidebarRow label="netflix/web" />
+        <SidebarRow label="netflix/tv-ui" />
+      </SidebarGroup>
+
+      <div className="okie-sidebar-navs">
+        <SidebarNavRow label="Inbox" kind="inbox" count={3} />
+        <SidebarNavRow label="Tracked" kind="tracked" count={8} />
+        <SidebarNavRow label="Workflows" kind="workflows" action="Add" active={activeNav === 'workflows'} />
+      </div>
+    </aside>
+  );
+}
+
+function AppTopBar({ crumb = 'netflix/web' }: { crumb?: string }) {
+  return (
+    <div className="okie-window-bar">
+      <div className="okie-window-lights" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="okie-window-brand">
+        <span className="okie-window-mark" aria-hidden="true">
+          O
+        </span>
+        <span className="okie-window-crumb">
+          Okie <span className="okie-window-slash">/</span> {crumb}
+        </span>
+      </div>
+      <div className="okie-window-sync">
+        <span className="okie-dot-live" />
+        Synced
+      </div>
     </div>
   );
 }
@@ -131,14 +311,263 @@ function Flow({ steps }: { steps: Array<{ label: string; tone: Tone }> }) {
   );
 }
 
+function WorkflowIcon({
+  kind
+}: {
+  kind: 'inbox' | 'queue' | 'lane' | 'wait' | 'comment' | 'approve' | 'play' | 'shield';
+}) {
+  switch (kind) {
+    case 'play':
+      return (
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+          <path d="M3.2 1.6v8.8l7.2-4.4-7.2-4.4z" />
+        </svg>
+      );
+    case 'inbox':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M4 13h4l2 3h4l2-3h4v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5z" />
+          <path d="M4 13l2.5-8h11L20 13" />
+        </svg>
+      );
+    case 'queue':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M12 3l1.8 4.6L18.5 9l-3.6 3.2.9 4.8L12 14.8 8.2 17l.9-4.8L5.5 9l4.7-1.4L12 3z" />
+        </svg>
+      );
+    case 'shield':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M12 3l7 3v5c0 4.5-2.8 7.4-7 9-4.2-1.6-7-4.5-7-9V6l7-3z" />
+        </svg>
+      );
+    case 'lane':
+    case 'wait':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <circle cx="12" cy="12" r="8" />
+          <path d="M12 8v5l3 2" />
+        </svg>
+      );
+    case 'comment':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v6A2.5 2.5 0 0 1 16.5 15H11l-4 3.5V15H7.5A2.5 2.5 0 0 1 5 12.5v-6z" />
+        </svg>
+      );
+    case 'approve':
+      return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+          <circle cx="12" cy="12" r="8" />
+          <path d="M8.5 12.2l2.3 2.3 4.7-4.8" />
+        </svg>
+      );
+    default: {
+      const _exhaustive: never = kind;
+      return _exhaustive;
+    }
+  }
+}
+
+function WorkflowNode({
+  kind,
+  title,
+  detail,
+  count,
+  badge,
+  danger
+}: {
+  kind: 'inbox' | 'queue' | 'lane';
+  title: string;
+  detail: string;
+  count: string;
+  badge?: string;
+  danger?: boolean;
+}) {
+  const iconKind = danger ? 'shield' : kind;
+
+  return (
+    <div className={`okie-wf-node is-${kind}${danger ? ' is-danger' : ''}`}>
+      <span className={`okie-wf-node-icon is-${iconKind}${danger ? ' is-danger' : ''}`}>
+        <WorkflowIcon kind={iconKind} />
+      </span>
+      <div className="okie-wf-node-body">
+        <div className="okie-wf-node-title">
+          {title}
+          {badge && <span className="okie-wf-wait">{badge}</span>}
+        </div>
+        <div className="okie-wf-node-detail">{detail}</div>
+      </div>
+      <span className="okie-wf-count">{count}</span>
+    </div>
+  );
+}
+
+function WorkflowsMock() {
+  return (
+    <div className="okie-window okie-window-how">
+      <AppTopBar crumb="Default" />
+      <div className="okie-wf-pipeline okie-wf-pipeline-solo">
+        <div className="okie-wf-pipeline-head">
+          <div className="okie-wf-pipeline-title">Automated workflows</div>
+          <div className="okie-wf-pipeline-sub">How Default sorts and acts on incoming pull requests.</div>
+        </div>
+
+        <div className="okie-wf-rail">
+          <div className="okie-wf-trigger">
+            <WorkflowIcon kind="play" />
+            <span>A pull request needs your review</span>
+          </div>
+
+          <WorkflowNode {...workflowLanes[0]} />
+          <WorkflowNode {...workflowLanes[1]} />
+
+          <div className="okie-wf-route">then route to the first match</div>
+
+          <WorkflowNode {...workflowLanes[2]} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InboxMock() {
+  return (
+    <div className="okie-window okie-window-how">
+      <AppTopBar crumb="Default" />
+      <div className="okie-mock okie-mock-panel">
+        <div className="okie-mock-head">
+          INBOX<span>⌘K</span>
+        </div>
+        {inboxItems.map(item => (
+          <div className={`okie-inbox-row${item.tone === 'critical' ? ' is-active' : ''}`} key={item.id}>
+            <span className="okie-inbox-label">
+              <span className={`okie-inbox-dot is-${item.tone}`} />
+              <span className="okie-mono okie-inbox-id">{item.id}</span>
+              <span className="okie-truncate">{item.title}</span>
+            </span>
+            <span className="okie-inbox-meta">{item.meta}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BriefMock() {
+  return (
+    <div className="okie-window okie-window-how">
+      <AppTopBar crumb="netflix/web" />
+      <div className="okie-mock okie-mock-panel">
+        <div className="okie-tabs okie-tabs-mock">
+          <span className="is-active">Review</span>
+          <span>Map</span>
+        </div>
+        <div className="okie-mock-title">Architecture affected</div>
+        <Flow steps={briefSteps} />
+      </div>
+    </div>
+  );
+}
+
+function GuidedMock() {
+  return (
+    <div className="okie-window okie-window-how">
+      <AppTopBar crumb="netflix/web" />
+      <div className="okie-mock okie-mock-panel">
+        <div className="okie-mock-head okie-mock-head-plain">
+          <span>
+            Review <strong>1</strong> / 3
+          </span>
+          <span className="okie-mock-attention">
+            <span className="okie-dot-live" />
+            Routine attention
+          </span>
+        </div>
+        <div className="okie-mock-title okie-mock-title-lg">We add a retry policy for failed playback heartbeats.</div>
+        <div className="okie-questions">
+          <div className="okie-questions-label">REVIEW QUESTIONS</div>
+          <div className="okie-question">
+            <span className="okie-checkbox" />
+            <span>Can a retried heartbeat move the saved position backwards?</span>
+          </div>
+        </div>
+        <div className="okie-file">
+          <span className="okie-truncate">
+            <span className="okie-file-dir">playback/</span>heartbeat-retry.ts
+          </span>
+          <span className="okie-file-stat">
+            <span className="okie-add">+42</span> <span className="okie-del">−6</span>
+          </span>
+        </div>
+        <div className="okie-mock-actions">
+          <span className="okie-action-skip">Skip</span>
+          <span className="okie-action-ghost">Needs changes</span>
+          <span className="okie-action-primary">✓ Looks good</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ApproveMock() {
+  return (
+    <div className="okie-window okie-window-how">
+      <AppTopBar crumb="netflix/web" />
+      <div className="okie-mock okie-mock-panel">
+        <div className="okie-mock-label">REVIEW COMPLETE</div>
+        <div className="okie-mock-title okie-mock-title-lg">Retry failed playback heartbeats</div>
+        <div className="okie-mock-meta">3 review units · 4 min elapsed · 18 files, 5 inspected</div>
+        <div className="okie-summary">
+          {completedUnits.map(unit => (
+            <div className="okie-summary-row" key={unit}>
+              <span className="okie-summary-label">
+                <span className="okie-tick">✓</span>
+                <span className="okie-truncate">{unit}</span>
+              </span>
+              <span className="okie-summary-verdict">Looks good</span>
+            </div>
+          ))}
+        </div>
+        <div className="okie-mock-actions">
+          <span className="okie-action-pill">Request changes</span>
+          <span className="okie-action-pill-primary">Approve on GitHub</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HowMock({ step }: { step: HowStepId }) {
+  switch (step) {
+    case 'inbox':
+      return <InboxMock />;
+    case 'workflows':
+      return <WorkflowsMock />;
+    case 'brief':
+      return <BriefMock />;
+    case 'guided':
+      return <GuidedMock />;
+    case 'approve':
+      return <ApproveMock />;
+    default: {
+      const _exhaustive: never = step;
+      return _exhaustive;
+    }
+  }
+}
+
 const Okie: NextPage = () => {
+  const [activeStep, setActiveStep] = useState<HowStepId>('workflows');
+
   return (
     <div className="okie">
       <Head>
         <title>Okie — Better PR reviews for GitHub</title>
         <meta
           name="description"
-          content="Okie is a Mac app for reviewing GitHub pull requests. It reads the PR before you do, writes the brief, groups 142 files into 4 review units, and walks you through them."
+          content="Okie is a Mac app for reviewing GitHub pull requests. It reads the PR before you do, writes the brief, groups 142 files into 4 review units, and walks you through them. You approve on GitHub."
         />
       </Head>
 
@@ -162,52 +591,30 @@ const Okie: NextPage = () => {
 
           <div className="okie-actions">
             <DownloadCta variant="primary" />
-            <a className="okie-cta okie-cta-ghost" href="#how">
-              See how a review works
+            <a
+              className="okie-cta okie-cta-ghost"
+              href={buyLicenseUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Buy license, €39
             </a>
+            <span className="okie-actions-note">7-day free trial. One-time license.</span>
           </div>
         </header>
 
         <section className="okie-shot">
           <div className="okie-shot-frame">
+            <div className="okie-shot-rings" aria-hidden="true" />
             <div className="okie-shot-watermark" aria-hidden="true">
               Okie
             </div>
 
             <div className="okie-window">
-              <div className="okie-window-bar">
-                <div className="okie-window-lights" aria-hidden="true">
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <div>
-                  Okie <span className="okie-window-slash">/</span> <span className="okie-mono">netflix/web</span>
-                </div>
-                <div className="okie-window-sync">
-                  <span className="okie-dot-live" />
-                  Synced
-                </div>
-              </div>
+              <AppTopBar crumb="netflix/web" />
 
               <div className="okie-window-body">
-                <aside className="okie-sidebar">
-                  <SidebarGroup label="WORKSPACES" count={2}>
-                    <SidebarRow label="Netflix" active />
-                    <SidebarRow label="Personal" />
-                  </SidebarGroup>
-                  <SidebarGroup label="REPOS" count={3}>
-                    <SidebarRow label="All repositories" />
-                    <SidebarRow label="netflix/web" active />
-                    <SidebarRow label="netflix/playback-api" />
-                    <SidebarRow label="netflix/tv-ui" />
-                  </SidebarGroup>
-                  <SidebarGroup label="INBOX" count={4}>
-                    <SidebarRow label="Critical" count={1} />
-                    <SidebarRow label="High" count={1} />
-                    <SidebarRow label="Routine" count={2} />
-                  </SidebarGroup>
-                </aside>
+                <AppSidebar />
 
                 <main className="okie-review">
                   <div className="okie-review-back">← Queue</div>
@@ -234,61 +641,58 @@ const Okie: NextPage = () => {
                     <span>Map</span>
                   </div>
 
-                  <div className="okie-review-grid">
-                    <div className="okie-review-col">
-                      <div className="okie-card">
-                        <div className="okie-card-block">
-                          <div className="okie-card-title">What changed</div>
-                          <div className="okie-card-body">
-                            The continue-watching row now loads from a precomputed feed instead of querying playback
-                            history on render. Feed rebuilds run in a background job and failed rebuilds are retried.
-                          </div>
-                        </div>
-                        <div className="okie-card-block okie-card-block-split">
-                          <div className="okie-card-title">Why</div>
-                          <div className="okie-card-note">
-                            Profiles with long histories made the TV home render slow enough to miss the frame budget.
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="okie-card okie-card-tight">
-                        <div className="okie-card-head">
-                          <span className="okie-card-title">Meaningful changes</span>
-                          <span className="okie-card-count">142 files reduced to 4</span>
-                        </div>
-                        {meaningfulChanges.map((change, index) => (
-                          <div className="okie-change" key={change.label}>
-                            <span className={`okie-change-dot is-${change.tone}`} />
-                            <div className="okie-change-body">
-                              <div className="okie-change-label">
-                                {index + 1}. {change.label}
-                              </div>
-                              <div className="okie-change-desc">{change.description}</div>
-                            </div>
-                            <span className="okie-mono okie-change-files">{change.files}</span>
-                          </div>
-                        ))}
+                  <div className="okie-card">
+                    <div className="okie-card-block">
+                      <div className="okie-card-title">What changed</div>
+                      <div className="okie-card-body">
+                        The continue-watching row now loads from a precomputed feed instead of querying playback
+                        history on render. Feed rebuilds run in a background job and failed rebuilds are retried.
                       </div>
                     </div>
-
-                    <div className="okie-review-col">
-                      <div className="okie-card okie-card-small">
-                        <div className="okie-card-title okie-card-title-flow">Architecture affected</div>
-                        <Flow steps={architectureSteps} />
-                      </div>
-
-                      <div className="okie-card okie-card-small">
-                        <div className="okie-card-title">Risk areas</div>
-                        <div className="okie-chips">
-                          <span>Concurrency</span>
-                          <span>Error handling</span>
-                          <span>Data</span>
-                        </div>
+                    <div className="okie-card-block okie-card-block-split">
+                      <div className="okie-card-title">Why</div>
+                      <div className="okie-card-note">
+                        Profiles with long histories made the TV home render slow enough to miss the frame budget.
                       </div>
                     </div>
                   </div>
+
+                  <div className="okie-card okie-card-tight">
+                    <div className="okie-card-head">
+                      <span className="okie-card-title">Meaningful changes</span>
+                      <span className="okie-card-count">142 files reduced to 4</span>
+                    </div>
+                    {meaningfulChanges.map((change, index) => (
+                      <div className="okie-change" key={change.label}>
+                        <span className={`okie-change-dot is-${change.tone}`} />
+                        <div className="okie-change-body">
+                          <div className="okie-change-label">
+                            {index + 1}. {change.label}
+                          </div>
+                          <div className="okie-change-desc">{change.description}</div>
+                        </div>
+                        <span className="okie-mono okie-change-files">{change.files}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="okie-trial-badge">Trial, 7 days left</div>
                 </main>
+
+                <aside className="okie-panel">
+                  <div className="okie-card okie-card-small">
+                    <div className="okie-card-title okie-card-title-flow">Architecture affected</div>
+                    <Flow steps={architectureSteps} />
+                  </div>
+                  <div className="okie-card okie-card-small">
+                    <div className="okie-card-title">Risk areas</div>
+                    <div className="okie-chips">
+                      <span>Concurrency</span>
+                      <span>Error handling</span>
+                      <span>Data</span>
+                    </div>
+                  </div>
+                </aside>
               </div>
             </div>
           </div>
@@ -303,7 +707,7 @@ const Okie: NextPage = () => {
           <div className="okie-eyebrow">THE PROBLEM</div>
           <p className="okie-problem-text">
             You open a 2,000-line PR and start at file 1. Generated noise sits next to the one behavioral change. The
-            diff viewer treats them the same. <span>Time to a confident approval is the cost.</span>
+            diff viewer treats them the same. Time to a confident approval is the cost.
           </p>
         </section>
 
@@ -311,167 +715,33 @@ const Okie: NextPage = () => {
           <div className="okie-divider">
             <span className="okie-divider-title">How a review works</span>
             <span className="okie-divider-rule" />
-            <span className="okie-divider-count">04</span>
+            <span className="okie-divider-count">05</span>
           </div>
 
-          <div className="okie-steps">
-            <div className="okie-step">
-              <div className="okie-mock">
-                <div className="okie-mock-head">
-                  INBOX<span>⌘K</span>
-                </div>
-                {inboxItems.map(item => (
-                  <div className={`okie-inbox-row${item.tone === 'critical' ? ' is-active' : ''}`} key={item.id}>
-                    <span className="okie-inbox-label">
-                      <span className={`okie-inbox-dot is-${item.tone}`} />
-                      <span className="okie-mono okie-inbox-id">{item.id}</span>
-                      <span className="okie-truncate">{item.title}</span>
+          <div className="okie-how-layout">
+            <ol className="okie-how-steps">
+              {howSteps.map(step => (
+                <li key={step.id}>
+                  <button
+                    type="button"
+                    className={`okie-how-step${activeStep === step.id ? ' is-active' : ''}`}
+                    onClick={() => setActiveStep(step.id)}
+                    aria-pressed={activeStep === step.id}
+                  >
+                    <span className="okie-how-step-number">{step.number}</span>
+                    <span className="okie-how-step-copy">
+                      <span className="okie-how-step-title">{step.title}</span>
+                      <span className="okie-how-step-body">{step.body}</span>
                     </span>
-                    <span className="okie-inbox-meta">{item.meta}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="okie-step-text">
-                <div className="okie-step-title">
-                  <span className="okie-step-number">1</span>Inbox
-                </div>
-                <p>
-                  PRs waiting on you, sorted by how much human attention they need. File count, risk count, time
-                  estimate.
-                </p>
-              </div>
-            </div>
+                  </button>
+                </li>
+              ))}
+            </ol>
 
-            <div className="okie-step">
-              <div className="okie-mock">
-                <div className="okie-tabs okie-tabs-mock">
-                  <span className="is-active">Review</span>
-                  <span>Map</span>
-                </div>
-                <div className="okie-mock-title">Architecture affected</div>
-                <Flow steps={briefSteps} />
+            <div className="okie-how-stage" aria-live="polite">
+              <div className="okie-how-frame">
+                <HowMock step={activeStep} />
               </div>
-              <div className="okie-step-text">
-                <div className="okie-step-title">
-                  <span className="okie-step-number">2</span>Brief
-                </div>
-                <p>What changed, why, which parts of the system move, and the files you can skip.</p>
-              </div>
-            </div>
-
-            <div className="okie-step">
-              <div className="okie-mock">
-                <div className="okie-mock-head okie-mock-head-plain">
-                  <span>
-                    Review <strong>1</strong> / 3
-                  </span>
-                  <span className="okie-mock-attention">
-                    <span className="okie-dot-live" />
-                    Routine attention
-                  </span>
-                </div>
-                <div className="okie-mock-title okie-mock-title-lg">
-                  We add a retry policy for failed playback heartbeats.
-                </div>
-                <div className="okie-questions">
-                  <div className="okie-questions-label">REVIEW QUESTIONS</div>
-                  <div className="okie-question">
-                    <span className="okie-checkbox" />
-                    <span>Can a retried heartbeat move the saved position backwards?</span>
-                  </div>
-                </div>
-                <div className="okie-file">
-                  <span className="okie-truncate">
-                    <span className="okie-file-dir">playback/</span>heartbeat-retry.ts
-                  </span>
-                  <span className="okie-file-stat">
-                    <span className="okie-add">+42</span> <span className="okie-del">−6</span>
-                  </span>
-                </div>
-                <div className="okie-mock-actions">
-                  <span className="okie-action-skip">Skip</span>
-                  <span className="okie-action-ghost">Needs changes</span>
-                  <span className="okie-action-primary">✓ Looks good</span>
-                </div>
-              </div>
-              <div className="okie-step-text">
-                <div className="okie-step-title">
-                  <span className="okie-step-number">3</span>Guided review
-                </div>
-                <p>
-                  One unit at a time. Why it matters, the questions, the few files that touch it, then a decision.
-                  Enter, C, J/K.
-                </p>
-              </div>
-            </div>
-
-            <div className="okie-step">
-              <div className="okie-mock">
-                <div className="okie-mock-label">REVIEW COMPLETE</div>
-                <div className="okie-mock-title okie-mock-title-lg">Retry failed playback heartbeats</div>
-                <div className="okie-mock-meta">3 review units · 4 min elapsed · 18 files, 5 inspected</div>
-                <div className="okie-summary">
-                  {completedUnits.map(unit => (
-                    <div className="okie-summary-row" key={unit}>
-                      <span className="okie-summary-label">
-                        <span className="okie-tick">✓</span>
-                        <span className="okie-truncate">{unit}</span>
-                      </span>
-                      <span className="okie-summary-verdict">Looks good</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="okie-mock-actions">
-                  <span className="okie-action-pill">Request changes</span>
-                  <span className="okie-action-pill-primary">Approve on GitHub</span>
-                </div>
-              </div>
-              <div className="okie-step-text">
-                <div className="okie-step-title">
-                  <span className="okie-step-number">4</span>Approve on GitHub
-                </div>
-                <p>
-                  Your decisions post back as a real review, with a record of what you inspected and what you skipped.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="okie-local">
-          <div className="okie-local-col">
-            <div className="okie-eyebrow">LOCAL AND PRIVATE</div>
-            <p>
-              GitHub OAuth on your Mac. The token is encrypted locally and settings live on disk. Okie sits in the menu
-              bar and polls for new review requests.
-            </p>
-          </div>
-          <div className="okie-local-col">
-            <div className="okie-eyebrow">LOCAL AGENTS, OPTIONAL</div>
-            <p>
-              Point Okie at Claude or Cursor CLI on your machine. The agent reads the repo and the PR and fills the
-              brief. Okie is the cockpit; the agent is the research assistant.
-            </p>
-          </div>
-        </section>
-
-        <section className="okie-for" id="for">
-          <div className="okie-eyebrow">WHO IT’S FOR</div>
-          <div className="okie-for-grid">
-            <div className="okie-for-card">
-              <span>The staff engineer</span>
-              <br />
-              reviewing an AI-authored PR.
-            </div>
-            <div className="okie-for-card">
-              <span>The tech lead</span>
-              <br />
-              protecting an architecture.
-            </div>
-            <div className="okie-for-card">
-              <span>The person</span>
-              <br />
-              who is “the reviewer” on too many repos.
             </div>
           </div>
         </section>
@@ -495,6 +765,9 @@ const Okie: NextPage = () => {
             <span>Okie</span>· Better PR reviews for GitHub.
           </span>
           <div className="okie-footer-links">
+            <a className="okie-footer-link" href={buyLicenseUrl} target="_blank" rel="noopener noreferrer">
+              Buy license
+            </a>
             <Link href="/">
               <a className="okie-footer-link">Nicu Barbaros</a>
             </Link>
