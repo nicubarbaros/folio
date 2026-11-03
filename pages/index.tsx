@@ -95,7 +95,7 @@ const Home: NextPage = () => {
           <div className="home-work-divider">
             <span className="home-work-heading">Things I’m making</span>
             <span className="home-work-rule" />
-            <span className="home-work-count">03</span>
+            <span className="home-work-count">04</span>
           </div>
 
           <Link href="/okie">
@@ -183,6 +183,41 @@ const Home: NextPage = () => {
               <strong>Partners</strong> <span className="home-caption-meta">· trypartners.app</span>
               <br />
               Track sponsorship payments and brand deals for creators. Never forget a payment again.
+            </p>
+          </a>
+
+          <a
+            className="home-project"
+            href="https://drone-alerts.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="home-preview home-preview-drone-alerts" data-tile="drone-alerts">
+              <Wordmark text="Drone Alerts" />
+              <div className="home-mock home-mock-drone-alerts">
+                <div className="home-mock-drone-alerts-head">
+                  <span className="home-mock-drone-alerts-status">
+                    <span className="home-mock-drone-alerts-dot" />
+                    Liniște
+                  </span>
+                  <span className="home-mock-drone-alerts-cta">Pornește alertele</span>
+                </div>
+                <div className="home-mock-drone-alerts-body">
+                  <div className="home-mock-drone-alerts-title">Nicio dronă activă acum</div>
+                  <div className="home-mock-drone-alerts-meta">Niciun traseu urmărit aproape de graniță</div>
+                </div>
+                <div className="home-mock-drone-alerts-zones">
+                  <div className="home-mock-drone-alerts-zone">Moldova</div>
+                  <div className="home-mock-drone-alerts-zone">10 km</div>
+                  <div className="home-mock-drone-alerts-zone">100 km</div>
+                </div>
+              </div>
+            </div>
+            <p className="home-caption">
+              <strong>Drone Alerts</strong>{' '}
+              <span className="home-caption-meta">· drone-alerts.vercel.app</span>
+              <br />
+              Watch public drone and rocket tracks near Moldova. Get alerted when one crosses in.
             </p>
           </a>
 
