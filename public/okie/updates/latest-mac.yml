@@ -1,3 +1,8 @@
+# Okie generic update feed (electron-updater).
+# Host the unsigned Apple Silicon Mac zip as a public GitHub Release asset on
+# nicubarbaros/folio. Do not commit the zip. When the asset is ready, set:
+#   version, releaseDate, files[].url (absolute release-asset URL), sha512, size
+# and matching top-level path/sha512. Leave files empty until then.
 version: 1.0.0
 files: []
 releaseDate: '2026-10-21T09:00:00.000Z'

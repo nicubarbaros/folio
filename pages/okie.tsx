@@ -2,17 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import okie from '../settings/okie';
 
 const HOW_DUR = 4500;
 const HOW_TICK = 100;
 
-// There is no build to hand out yet. Fill this in and both calls to action
-// become real download links; until then they anchor to the download section.
-const downloadUrl = '';
-const ctaLabel = 'Download for Mac';
-
-// TODO: swap the test Lemon Squeezy checkout for the live Okie license product.
-const buyLicenseUrl = 'https://okie.lemonsqueezy.com/checkout/buy/a53f9af4-e179-4ae0-8ef8-a85872758f84';
+const { downloadUrl, ctaLabel, buyLicenseUrl, licenseNote } = okie;
 
 type Tone = 'critical' | 'changed' | 'plain';
 type HowStepId = 'inbox' | 'workflows' | 'brief' | 'guided' | 'approve';
@@ -615,7 +610,7 @@ const Okie: NextPage = () => {
           <div className="okie-actions">
             <DownloadCta variant="primary" />
             <BuyLicenseCta variant="ghost" />
-            <span className="okie-actions-note">7-day free trial. One-time license.</span>
+            <span className="okie-actions-note">{licenseNote}</span>
           </div>
         </header>
 
@@ -847,7 +842,7 @@ const Okie: NextPage = () => {
           <div className="okie-download-actions">
             <DownloadCta variant="invert" />
             <BuyLicenseCta variant="on-blue" />
-            <span className="okie-download-note">7-day free trial. One-time license.</span>
+            <span className="okie-download-note">{licenseNote}</span>
           </div>
         </section>
 
