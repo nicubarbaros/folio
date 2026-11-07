@@ -132,7 +132,7 @@ function BuyLicenseCta({ variant }: { variant: 'ghost' | 'on-blue' }) {
       target="_blank"
       rel="noopener noreferrer"
     >
-      Buy license, €39
+      Buy license, $39
     </a>
   );
 }
