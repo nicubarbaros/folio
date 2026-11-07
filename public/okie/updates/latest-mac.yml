@@ -1,8 +1,24 @@
-# Okie generic update feed (electron-updater).
-# Host the unsigned Apple Silicon Mac zip as a public GitHub Release asset on
-# nicubarbaros/folio. Do not commit the zip. When the asset is ready, set:
-#   version, releaseDate, files[].url (absolute release-asset URL), sha512, size
-# and matching top-level path/sha512. Leave files empty until then.
+# Okie generic update feed (electron-updater → https://www.nicubarbaros.com/okie/updates/).
+#
+# App: nicubarbaros/okie PR #10 @ e4f865ca2fe0e8b1b92396bd6a700084f6099245
+# Version: 1.0.0
+# Expected zip (not built/tested yet): Okie-darwin-arm64-1.0.0.zip
+#
+# Do not commit the zip. Upload it as a public GitHub Release asset on
+# nicubarbaros/folio. After upload, replace this file with measured fields:
+#   version: 1.0.0
+#   files:
+#     - url: https://github.com/nicubarbaros/folio/releases/download/<tag>/Okie-darwin-arm64-1.0.0.zip
+#       sha512: <base64 from the uploaded zip>
+#       size: <bytes>
+#   path: https://github.com/nicubarbaros/folio/releases/download/<tag>/Okie-darwin-arm64-1.0.0.zip
+#   sha512: <same>
+#   releaseDate: '<ISO from the release>'
+#
+# Absolute Release URLs are required: okie's update-feed script writes relative
+# names and can copy the zip beside the yml — use that only to obtain sha512/size,
+# then host the zip on Releases and rewrite url/path to the asset URL before commit.
+# Leave files empty until the real asset exists. Do not invent URLs or hashes.
 version: 1.0.0
 files: []
 releaseDate: '2026-10-21T09:00:00.000Z'

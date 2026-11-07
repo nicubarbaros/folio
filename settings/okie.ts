@@ -1,13 +1,25 @@
 /**
  * Okie landing + update-feed publish settings.
  *
- * The Mac zip is hosted as a public GitHub Release asset on nicubarbaros/folio
- * (too large to commit). Leave downloadUrl empty until that asset URL exists.
- * Example shape once ready:
- *   https://github.com/nicubarbaros/folio/releases/download/<tag>/<asset>.zip
+ * App source (LS-only release, do not merge without owner approval):
+ *   https://github.com/nicubarbaros/okie/pull/10
+ *   head e4f865ca2fe0e8b1b92396bd6a700084f6099245
+ *   version 1.0.0
+ *   expected zip: Okie-darwin-arm64-1.0.0.zip
  *
- * After upload, also fill public/okie/updates/latest-mac.yml with the same
- * absolute asset URL, sha512, size, version, and releaseDate.
+ * Mac packaging runs on the owner's personal arm64 Mac. Until that zip is
+ * built, tested, uploaded, and its Release asset URL + sha512/size are known,
+ * leave downloadUrl empty. Do not invent a published URL.
+ *
+ * Hosting: public GitHub Release asset on nicubarbaros/folio (zip >100MB —
+ * never commit the zip). Cloud branch nicubarbaros/okie-release-publish-2b92
+ * is the folio source of truth; ignore unrelated dirty local folio checkouts.
+ *
+ * After the asset exists, set downloadUrl to the Release asset URL, e.g.:
+ *   https://github.com/nicubarbaros/folio/releases/download/<tag>/Okie-darwin-arm64-1.0.0.zip
+ * and fill public/okie/updates/latest-mac.yml with the same absolute URL plus
+ * the measured sha512/size/version/releaseDate (absolute URL required because
+ * the zip is not served beside the feed).
  */
 const okie = {
   /** Public GitHub Release asset URL for the unsigned Apple Silicon Mac zip. */
