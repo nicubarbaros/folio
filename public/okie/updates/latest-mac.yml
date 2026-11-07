@@ -1,24 +1,19 @@
-# Okie generic update feed (electron-updater → https://www.nicubarbaros.com/okie/updates/).
-#
+# Okie 1.0.0 feed — measured from Okie-darwin-arm64-1.0.0.zip
 # App: nicubarbaros/okie PR #10 @ e4f865ca2fe0e8b1b92396bd6a700084f6099245
-# Version: 1.0.0
-# Expected zip (not built/tested yet): Okie-darwin-arm64-1.0.0.zip
+# Size: 118198726 bytes
+# SHA256: a3eaced89fd85c8437b7b28f30662592df19c968470f10fdfd6b6ce626203565
+# SHA512 hex: fb9e8dfea438b4623c7e070f3f5cb9496d76bc90cb3a0bf71eac43f6614d9d11e9fd5dcec4ffdb241e89f28bab4ee0d98c41c6cc4fc1028f3c161cb2e3141fd6
+# sha512 below is base64(unhex(SHA512 hex)) for electron-updater.
 #
-# Do not commit the zip. Upload it as a public GitHub Release asset on
-# nicubarbaros/folio. After upload, replace this file with measured fields:
-#   version: 1.0.0
-#   files:
-#     - url: https://github.com/nicubarbaros/folio/releases/download/<tag>/Okie-darwin-arm64-1.0.0.zip
-#       sha512: <base64 from the uploaded zip>
-#       size: <bytes>
-#   path: https://github.com/nicubarbaros/folio/releases/download/<tag>/Okie-darwin-arm64-1.0.0.zip
-#   sha512: <same>
-#   releaseDate: '<ISO from the release>'
-#
-# Absolute Release URLs are required: okie's update-feed script writes relative
-# names and can copy the zip beside the yml — use that only to obtain sha512/size,
-# then host the zip on Releases and rewrite url/path to the asset URL before commit.
-# Leave files empty until the real asset exists. Do not invent URLs or hashes.
+# url/path use the asset file name only. No GitHub Release uploaded yet.
+# After the public Release asset exists, rewrite url and path to the absolute
+# asset URL, keep sha512/size, then set settings/okie.ts downloadUrl to match.
+# Do not commit the zip.
 version: 1.0.0
-files: []
-releaseDate: '2026-10-21T09:00:00.000Z'
+files:
+  - url: Okie-darwin-arm64-1.0.0.zip
+    sha512: +56N/qQ4tGI8fgcPP1y5SW12vJDLOgv3HqxD9mFNnRHp/V3OxP/bJB6J8ourTuDZjEHGzE/BAo88Fhyy4xQf1g==
+    size: 118198726
+path: Okie-darwin-arm64-1.0.0.zip
+sha512: +56N/qQ4tGI8fgcPP1y5SW12vJDLOgv3HqxD9mFNnRHp/V3OxP/bJB6J8ourTuDZjEHGzE/BAo88Fhyy4xQf1g==
+releaseDate: '2026-11-07T13:45:00.000Z'

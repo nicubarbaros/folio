@@ -1,28 +1,28 @@
 /**
  * Okie landing + update-feed publish settings.
  *
- * App source (LS-only release, do not merge without owner approval):
+ * App source (LS-only, owner merge approval required):
  *   https://github.com/nicubarbaros/okie/pull/10
  *   head e4f865ca2fe0e8b1b92396bd6a700084f6099245
  *   version 1.0.0
- *   expected zip: Okie-darwin-arm64-1.0.0.zip
  *
- * Mac packaging runs on the owner's personal arm64 Mac. Until that zip is
- * built, tested, uploaded, and its Release asset URL + sha512/size are known,
- * leave downloadUrl empty. Do not invent a published URL.
+ * Built artifact (packaged click test still in progress; not on GitHub Releases):
+ *   Okie-darwin-arm64-1.0.0.zip
+ *   size 118198726
+ *   SHA256 a3eaced89fd85c8437b7b28f30662592df19c968470f10fdfd6b6ce626203565
+ *   SHA512 hex fb9e8dfea438b4623c7e070f3f5cb9496d76bc90cb3a0bf71eac43f6614d9d11e9fd5dcec4ffdb241e89f28bab4ee0d98c41c6cc4fc1028f3c161cb2e3141fd6
+ *   feed sha512 base64 in public/okie/updates/latest-mac.yml
  *
- * Hosting: public GitHub Release asset on nicubarbaros/folio (zip >100MB —
- * never commit the zip). Cloud branch nicubarbaros/okie-release-publish-2b92
- * is the folio source of truth; ignore unrelated dirty local folio checkouts.
+ * downloadUrl stays empty until the public Release asset URL exists.
+ * Proposed Release tag (not created): okie-v1.0.0
+ * Expected asset URL shape after upload:
+ *   https://github.com/nicubarbaros/folio/releases/download/okie-v1.0.0/Okie-darwin-arm64-1.0.0.zip
  *
- * After the asset exists, set downloadUrl to the Release asset URL, e.g.:
- *   https://github.com/nicubarbaros/folio/releases/download/<tag>/Okie-darwin-arm64-1.0.0.zip
- * and fill public/okie/updates/latest-mac.yml with the same absolute URL plus
- * the measured sha512/size/version/releaseDate (absolute URL required because
- * the zip is not served beside the feed).
+ * Folio source of truth: cloud branch nicubarbaros/okie-release-publish-2b92.
+ * Do not use unrelated dirty local folio checkouts.
  */
 const okie = {
-  /** Public GitHub Release asset URL for the unsigned Apple Silicon Mac zip. */
+  /** Public GitHub Release asset URL. Empty until the Release asset is uploaded. */
   downloadUrl: '',
   ctaLabel: 'Download for Mac',
   buyLicenseUrl:
