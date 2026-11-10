@@ -1,14 +1,13 @@
 /**
  * Okie landing + update-feed publish settings.
  *
- * Landing Download CTA → DMG on nicubarbaros/okie-app (swap `downloadUrl` when the
- * final DMG filename is confirmed). Update feed stays on the ZIP in
- * public/okie/updates/latest-mac.yml — do not point the feed at the DMG.
+ * Landing Download CTA → DMG on nicubarbaros/okie-app (`downloadUrl` below).
+ * Update feed stays on the ZIP in public/okie/updates/latest-mac.yml.
  *
  * Landing price copy matches live Lemon Squeezy checkout display: $39 USD.
  */
 
-/** Website /okie Download button. Swap this when the final DMG asset URL is confirmed. */
+/** Website /okie Download button (okie-app Release DMG). */
 export const downloadUrl =
   'https://github.com/nicubarbaros/okie-app/releases/download/v1.0.0/Okie-1.0.0-arm64.dmg';
 

@@ -1,9 +1,9 @@
-# electron-updater Mac feed — keep on the ZIP (not the website DMG).
+# electron-updater Mac feed — ZIP on nicubarbaros/okie-app (not the website DMG).
 version: 1.0.0
 files:
   - url: https://github.com/nicubarbaros/okie-app/releases/download/v1.0.0/Okie-darwin-arm64-1.0.0.zip
-    sha512: yyl/K80vOlmkeNzrrQTI20e4i//JTWdXwMDHMGQTPW6YQKgQ/AOIaTZGLBpg0a/rDty4cxPW1wD/doiSpdazrw==
-    size: 118213399
+    sha512: vHS+OhOTRwPDTdVhZAE06L/ejyqUwlvwuTVHrZgXJYlXOVE3EVV+NqkkhhtV4uKlTIB2V9M4AlmpKNbfAQCSTA==
+    size: 118215803
 path: https://github.com/nicubarbaros/okie-app/releases/download/v1.0.0/Okie-darwin-arm64-1.0.0.zip
-sha512: yyl/K80vOlmkeNzrrQTI20e4i//JTWdXwMDHMGQTPW6YQKgQ/AOIaTZGLBpg0a/rDty4cxPW1wD/doiSpdazrw==
-releaseDate: '2026-11-10T19:59:55.000Z'
+sha512: vHS+OhOTRwPDTdVhZAE06L/ejyqUwlvwuTVHrZgXJYlXOVE3EVV+NqkkhhtV4uKlTIB2V9M4AlmpKNbfAQCSTA==
+releaseDate: '2026-11-10T20:19:18.000Z'
