@@ -1,16 +1,19 @@
 /**
  * Okie landing + update-feed publish settings.
  *
- * Release: https://github.com/nicubarbaros/okie-app/releases/tag/v1.0.0
- * Asset: Okie-darwin-arm64-1.0.0.zip (unsigned Apple Silicon)
- * size 118213399
- * SHA512 base64 in public/okie/updates/latest-mac.yml
+ * Landing Download CTA → DMG on nicubarbaros/okie-app (swap `downloadUrl` when the
+ * final DMG filename is confirmed). Update feed stays on the ZIP in
+ * public/okie/updates/latest-mac.yml — do not point the feed at the DMG.
  *
  * Landing price copy matches live Lemon Squeezy checkout display: $39 USD.
  */
+
+/** Website /okie Download button. Swap this when the final DMG asset URL is confirmed. */
+export const downloadUrl =
+  'https://github.com/nicubarbaros/okie-app/releases/download/v1.0.0/Okie-1.0.0-arm64.dmg';
+
 const okie = {
-  downloadUrl:
-    'https://github.com/nicubarbaros/okie-app/releases/download/v1.0.0/Okie-darwin-arm64-1.0.0.zip',
+  downloadUrl,
   ctaLabel: 'Download for Mac',
   buyLicenseUrl:
     'https://trypartners.lemonsqueezy.com/checkout/buy/833b60f9-4e69-4dc0-a870-03cd0f2f06df',
