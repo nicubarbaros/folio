@@ -2,12 +2,20 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useOkieEngagement } from '../hooks/useOkieEngagement';
 import okie from '../settings/okie';
+import type { OkieCtaLocation } from '../utils/okieAnalytics';
+import {
+  trackOkieBuyLicenseClick,
+  trackOkieDownloadClick,
+  trackOkieHowStepSelect,
+  trackOkieOutboundClick
+} from '../utils/okieAnalytics';
 
 const HOW_DUR = 4500;
 const HOW_TICK = 100;
 
-const { downloadUrl, ctaLabel, buyLicenseUrl, licenseNote } = okie;
+const { downloadUrl, ctaLabel, buyLicenseUrl, licenseNote, licensePrice } = okie;
 
 type Tone = 'critical' | 'changed' | 'plain';
 type HowStepId = 'inbox' | 'workflows' | 'brief' | 'guided' | 'approve';
@@ -109,7 +117,7 @@ function AppleLogo() {
   );
 }
 
-function DownloadCta({ variant }: { variant: 'primary' | 'invert' }) {
+function DownloadCta({ variant, location }: { variant: 'primary' | 'invert'; location: OkieCtaLocation }) {
   const isLink = Boolean(downloadUrl);
 
   return (
@@ -117,6 +125,10 @@ function DownloadCta({ variant }: { variant: 'primary' | 'invert' }) {
       className={`okie-cta okie-cta-${variant}`}
       href={isLink ? downloadUrl : '#download'}
       {...(isLink ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      onClick={event => {
+        if (!isLink) return;
+        trackOkieDownloadClick(location, { url: event.currentTarget.href });
+      }}
     >
       <AppleLogo />
       {ctaLabel}
@@ -124,15 +136,18 @@ function DownloadCta({ variant }: { variant: 'primary' | 'invert' }) {
   );
 }
 
-function BuyLicenseCta({ variant }: { variant: 'ghost' | 'on-blue' }) {
+function BuyLicenseCta({ variant, location }: { variant: 'ghost' | 'on-blue'; location: OkieCtaLocation }) {
   return (
     <a
       className={`okie-cta okie-cta-${variant === 'ghost' ? 'ghost' : 'on-blue'}`}
       href={buyLicenseUrl}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={event => {
+        trackOkieBuyLicenseClick(location, { url: event.currentTarget.href });
+      }}
     >
-      Buy license, $39
+      Buy license, ${licensePrice}
     </a>
   );
 }
@@ -579,8 +594,11 @@ const Okie: NextPage = () => {
     });
   }, []);
 
+  const pageRef = useRef<HTMLDivElement>(null);
+  useOkieEngagement(pageRef);
+
   return (
-    <div className="okie">
+    <div className="okie" ref={pageRef}>
       <Head>
         <title>Okie — Better PR reviews for GitHub</title>
         <meta
@@ -590,7 +608,7 @@ const Okie: NextPage = () => {
       </Head>
 
       <div className="okie-inner">
-        <header className="okie-intro">
+        <header className="okie-intro" data-okie-section="hero">
           <div className="okie-brand">
             <span className="okie-brand-mark" aria-hidden="true">
               O
@@ -608,13 +626,13 @@ const Okie: NextPage = () => {
           </p>
 
           <div className="okie-actions">
-            <DownloadCta variant="primary" />
-            <BuyLicenseCta variant="ghost" />
+            <DownloadCta variant="primary" location="hero" />
+            <BuyLicenseCta variant="ghost" location="hero" />
             <span className="okie-actions-note">{licenseNote}</span>
           </div>
         </header>
 
-        <section className="okie-shot">
+        <section className="okie-shot" data-okie-section="product">
           <ScaleFrame designWidth={SHOT_DESIGN_WIDTH} className="okie-shot-scale">
             <div className="okie-shot-frame">
               <div className="okie-shot-watermark" aria-hidden="true">
@@ -772,7 +790,7 @@ const Okie: NextPage = () => {
           </p>
         </section>
 
-        <section className="okie-problem">
+        <section className="okie-problem" data-okie-section="problem">
           <div className="okie-eyebrow">THE PROBLEM</div>
           <p className="okie-problem-text">
             You open a 2,000-line PR and start at file 1. Generated noise sits next to the one behavioral change. The
@@ -780,7 +798,7 @@ const Okie: NextPage = () => {
           </p>
         </section>
 
-        <section className="okie-how" id="how">
+        <section className="okie-how" id="how" data-okie-section="how">
           <div className="okie-divider">
             <span className="okie-divider-title">How a review works</span>
             <span className="okie-divider-rule" />
@@ -797,7 +815,10 @@ const Okie: NextPage = () => {
                     <button
                       type="button"
                       className={`okie-how-step${on ? ' is-active' : ''}`}
-                      onClick={() => pickStep(n)}
+                      onClick={() => {
+                        pickStep(n);
+                        trackOkieHowStepSelect({ stepId: step.id, stepNumber: n, stepName: step.title });
+                      }}
                       onMouseEnter={() => hoverStep(n)}
                       aria-pressed={on}
                     >
@@ -832,7 +853,7 @@ const Okie: NextPage = () => {
           </div>
         </section>
 
-        <section className="okie-download" id="download">
+        <section className="okie-download" id="download" data-okie-section="download">
           <div className="okie-download-watermark" aria-hidden="true">
             Okie
           </div>
@@ -840,13 +861,13 @@ const Okie: NextPage = () => {
             macOS. Connect GitHub. Pick repos. <em>Review.</em>
           </h2>
           <div className="okie-download-actions">
-            <DownloadCta variant="invert" />
-            <BuyLicenseCta variant="on-blue" />
+            <DownloadCta variant="invert" location="download" />
+            <BuyLicenseCta variant="on-blue" location="download" />
             <span className="okie-download-note">{licenseNote}</span>
           </div>
         </section>
 
-        <footer className="okie-footer">
+        <footer className="okie-footer" data-okie-section="footer">
           <span className="okie-footer-brand">
             <span>Okie</span>· Better PR reviews for GitHub.
           </span>
@@ -859,6 +880,9 @@ const Okie: NextPage = () => {
               href="https://github.com/nicubarbaros"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={event => {
+                trackOkieOutboundClick({ location: 'footer', linkUrl: event.currentTarget.href });
+              }}
             >
               GitHub
             </a>
