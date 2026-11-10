@@ -9,7 +9,7 @@
 
 /** Website /okie Download button (okie-app Release DMG). */
 export const downloadUrl =
-  'https://github.com/nicubarbaros/okie-app/releases/download/v1.0.0/Okie-1.0.0-arm64.dmg';
+  'https://github.com/nicubarbaros/okie-app/releases/latest/download/Okie-arm64.dmg';
 
 /** Live Lemon Squeezy checkout display price. */
 export const licensePrice = 39;

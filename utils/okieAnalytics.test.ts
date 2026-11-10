@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import okie from '../settings/okie';
 import type { AnalyticsRuntime } from './gtag';
 import {
   downloadFileMeta,
@@ -15,19 +16,24 @@ import {
   trackOkieSectionView
 } from './okieAnalytics';
 
-const DMG = 'https://github.com/nicubarbaros/okie-app/releases/download/v1.0.0/Okie-1.0.0-arm64.dmg';
+const DMG = 'https://github.com/nicubarbaros/okie-app/releases/latest/download/Okie-arm64.dmg';
 const CHECKOUT = 'https://trypartners.lemonsqueezy.com/checkout/buy/833b60f9-4e69-4dc0-a870-03cd0f2f06df';
 
 function production(gtag: (...args: unknown[]) => void): AnalyticsRuntime {
   return { nodeEnv: 'production', trackingId: 'G-TEST', gtag };
 }
 
+test('landing download url is the stable arm64 dmg', () => {
+  assert.equal(okie.downloadUrl, DMG);
+});
+
 test('downloadFileMeta reads the dmg name and version', () => {
   assert.deepEqual(downloadFileMeta(DMG), {
-    fileName: 'Okie-1.0.0-arm64.dmg',
+    fileName: 'Okie-arm64.dmg',
     fileExtension: 'dmg',
-    version: '1.0.0'
+    version: ''
   });
+  assert.equal(downloadFileMeta('https://example.com/Okie-1.2.3-arm64.dmg').version, '1.2.3');
 });
 
 test('downloadFileMeta ignores an in-page anchor', () => {
@@ -90,8 +96,7 @@ test('download click sends one beacon event', () => {
       'okie_download_click',
       {
         location: 'hero',
-        version: '1.0.0',
-        file_name: 'Okie-1.0.0-arm64.dmg',
+        file_name: 'Okie-arm64.dmg',
         file_extension: 'dmg',
         link_url: DMG,
         transport_type: 'beacon'
