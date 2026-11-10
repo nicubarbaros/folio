@@ -1,15 +1,8 @@
-# Okie 1.0.0 feed staging — do not deploy relative zip references.
-# App: nicubarbaros/okie PR #10 @ e4f865ca2fe0e8b1b92396bd6a700084f6099245
-# Expected zip: Okie-darwin-arm64-1.0.0.zip
-# Measured size: 118198726
-# SHA256: a3eaced89fd85c8437b7b28f30662592df19c968470f10fdfd6b6ce626203565
-# SHA512 hex: fb9e8dfea438b4623c7e070f3f5cb9496d76bc90cb3a0bf71eac43f6614d9d11e9fd5dcec4ffdb241e89f28bab4ee0d98c41c6cc4fc1028f3c161cb2e3141fd6
-# Feed sha512 base64: +56N/qQ4tGI8fgcPP1y5SW12vJDLOgv3HqxD9mFNnRHp/V3OxP/bJB6J8ourTuDZjEHGzE/BAo88Fhyy4xQf1g==
-# Proposed tag (plan only): okie-v1.0.0
-#
-# files stays empty until a public Release asset URL exists. Then set absolute
-# url/path + measured sha512/size. Never publish a relative zip that is not
-# hosted beside this feed.
 version: 1.0.0
-files: []
-releaseDate: '2026-11-07T13:45:00.000Z'
+files:
+  - url: https://github.com/nicubarbaros/folio/releases/download/okie-v1.0.0/Okie-darwin-arm64-1.0.0.zip
+    sha512: yyl/K80vOlmkeNzrrQTI20e4i//JTWdXwMDHMGQTPW6YQKgQ/AOIaTZGLBpg0a/rDty4cxPW1wD/doiSpdazrw==
+    size: 118213399
+path: https://github.com/nicubarbaros/folio/releases/download/okie-v1.0.0/Okie-darwin-arm64-1.0.0.zip
+sha512: yyl/K80vOlmkeNzrrQTI20e4i//JTWdXwMDHMGQTPW6YQKgQ/AOIaTZGLBpg0a/rDty4cxPW1wD/doiSpdazrw==
+releaseDate: '2026-11-10T19:59:55.000Z'
