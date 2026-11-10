@@ -21,8 +21,8 @@ A click on Download for Mac sends this when the link is a `.dmg` or `.zip` file.
 | Param          | Example                | Meaning                                              |
 | -------------- | ---------------------- | ---------------------------------------------------- |
 | location       | `hero`, `download`     | `hero` is the intro. `download` is the closing band. |
-| version        | `1.0.0`                | Taken from the file name.                            |
-| file_name      | `Okie-1.0.0-arm64.dmg` | File name in the URL.                                |
+| version        | omitted                | Taken from the file name when it contains x.y.z.     |
+| file_name      | `Okie-arm64.dmg`       | File name in the URL.                                |
 | file_extension | `dmg`                  | Extension of that file.                              |
 | link_url       | GitHub release URL     | The href.                                            |
 | transport_type | `beacon`               | Sent with `navigator.sendBeacon`.                    |
