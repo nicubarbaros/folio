@@ -58,8 +58,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
         {/* {!loader && ( */}
         <>
-          {/* the home and okie designs are single column with no nav, the fixed bar overlaps their intro */}
-          {pathname !== '/' && pathname !== '/okie' && <Header />}
+          {/* home and /okie pages are a single column; the fixed bar overlaps their intro */}
+          {pathname !== '/' && pathname !== '/okie' && !pathname.startsWith('/okie/') && <Header />}
           <Component {...pageProps} />
         </>
         {/* )} */}

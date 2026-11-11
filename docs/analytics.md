@@ -93,6 +93,10 @@ The footer GitHub profile sends this. `transport_type` is `beacon`.
 
 The download file and the checkout have their own events. A link back to nicubarbaros.com stays on the site.
 
+`/okie/privacy` and `/okie/terms` use this same tag. A visit sends `page_view` for that path. Those pages send `okie_scroll_depth` at 25, 50, 75, and 100, and the footer sends `okie_section_view` with `footer`. The GitHub profile in the footer sends `okie_outbound_click` with location `footer`. The link to `nicubarbaros/okie-app` issues sends it with location `contact`. Links among `/okie`, `/okie/privacy`, `/okie/terms`, and `/` stay on this site.
+
+The funnel step `Visit /okie` is an exact path match, so the privacy and terms pages stay out of that step.
+
 Enhanced measurement can also record a generic `click` for the GitHub profile. Use `okie_outbound_click` for the Okie report.
 
 ## Key events
