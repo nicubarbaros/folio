@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useOkieEngagement } from '../hooks/useOkieEngagement';
+import OkieFooter from '../components/OkieFooter';
 import okie from '../settings/okie';
 import type { OkieCtaLocation } from '../utils/okieAnalytics';
 import {
   trackOkieBuyLicenseClick,
   trackOkieDownloadClick,
-  trackOkieHowStepSelect,
-  trackOkieOutboundClick
+  trackOkieHowStepSelect
 } from '../utils/okieAnalytics';
 
 const HOW_DUR = 4500;
@@ -867,27 +866,7 @@ const Okie: NextPage = () => {
           </div>
         </section>
 
-        <footer className="okie-footer" data-okie-section="footer">
-          <span className="okie-footer-brand">
-            <span>Okie</span>· Better PR reviews for GitHub.
-          </span>
-          <div className="okie-footer-links">
-            <Link href="/">
-              <a className="okie-footer-link">Nicu Barbaros</a>
-            </Link>
-            <a
-              className="okie-footer-link"
-              href="https://github.com/nicubarbaros"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={event => {
-                trackOkieOutboundClick({ location: 'footer', linkUrl: event.currentTarget.href });
-              }}
-            >
-              GitHub
-            </a>
-          </div>
-        </footer>
+        <OkieFooter />
       </div>
     </div>
   );
