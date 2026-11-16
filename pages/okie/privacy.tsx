@@ -7,7 +7,7 @@ const Privacy: NextPage = () => {
   return (
     <OkieLegalPage
       title="Privacy Policy"
-      description="What Okie stores on your Mac, what it sends to GitHub, a local AI CLI, and Lemon Squeezy, and how this website uses Google Analytics 4."
+      description="What Okie stores on your Mac, what it sends to GitHub, a local AI CLI, and Gumroad, and how this website uses Google Analytics 4."
     >
       <section className="okie-legal-section">
         <h2>What stays on your Mac</h2>
@@ -42,7 +42,6 @@ const Privacy: NextPage = () => {
         <ul>
           <li>provider</li>
           <li>license key</li>
-          <li>Lemon Squeezy instance id</li>
           <li>last validation</li>
           <li>expiry</li>
           <li>status</li>
@@ -131,21 +130,20 @@ const Privacy: NextPage = () => {
       </section>
 
       <section className="okie-legal-section">
-        <h2>Lemon Squeezy</h2>
+        <h2>Gumroad</h2>
         <p>The trial lasts 7 days. Okie tracks it on the Mac only.</p>
         <p>
-          Activation sends the license key and an instance name to <code>api.lemonsqueezy.com</code>. The instance name
-          is the Mac&apos;s hostname, limited to 100 characters. Validation and deactivation send the license key and
-          the instance id. While a license is saved, validation runs about once an hour.
+          Okie sends the license key to Gumroad&apos;s license verify API at{' '}
+          <code>https://api.gumroad.com/v2/licenses/verify</code>. Gumroad verifies the key.
         </p>
         <p>
           Updates are included for one year after purchase. After that year the app keeps working, and update checks
           stop.
         </p>
-        <p>If validation cannot be reached, a key that was already active keeps working for 3 days.</p>
+        <p>If a license check cannot reach Gumroad, a key that was already active keeps working for 3 days.</p>
         <p>
-          The Buy button opens the Lemon Squeezy checkout in the browser. Lemon Squeezy handles the payment as the
-          merchant of record. Okie does not see card data.
+          The Buy button opens the Gumroad checkout in the browser. Gumroad handles the purchase details at checkout.
+          Gumroad is the seller and the payment processor (merchant of record).
         </p>
       </section>
 
