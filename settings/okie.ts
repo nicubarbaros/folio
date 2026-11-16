@@ -16,11 +16,10 @@ export const licensePrice = 39;
 export const licenseCurrency = 'USD';
 
 /**
- * PLACEHOLDER: Gumroad checkout URL.
- * Replace this string with the real Gumroad product URL after the product exists.
+ * Gumroad checkout URL. `wanted=true` opens the checkout directly.
  * Every Buy license link reads this constant.
  */
-export const buyLicenseUrl = 'https://gumroad.com/l/REPLACE_WITH_GUMROAD_CHECKOUT_URL';
+export const buyLicenseUrl = 'https://nicubarbaros.gumroad.com/l/zxoaf?wanted=true';
 
 const okie = {
   downloadUrl,
