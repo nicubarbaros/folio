@@ -17,7 +17,7 @@ import {
 } from './okieAnalytics';
 
 const DMG = 'https://github.com/nicubarbaros/okie-app/releases/latest/download/Okie-arm64.dmg';
-const CHECKOUT = 'https://trypartners.lemonsqueezy.com/checkout/buy/833b60f9-4e69-4dc0-a870-03cd0f2f06df';
+const CHECKOUT = okie.buyLicenseUrl;
 
 function production(gtag: (...args: unknown[]) => void): AnalyticsRuntime {
   return { nodeEnv: 'production', trackingId: 'G-TEST', gtag };

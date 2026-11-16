@@ -7,7 +7,7 @@ const Terms: NextPage = () => {
   return (
     <OkieLegalPage
       title="Terms of Use"
-      description="Terms for Okie: the license sold through Lemon Squeezy, the 7-day trial, one year of updates, and your responsibility for GitHub and AI use."
+      description="Terms for Okie: the license sold through Gumroad, the 7-day trial, one year of updates, and your responsibility for GitHub and AI use."
     >
       <section className="okie-legal-section">
         <h2>The software</h2>
@@ -21,14 +21,17 @@ const Terms: NextPage = () => {
 
       <section className="okie-legal-section">
         <h2>License</h2>
-        <p>A license is sold per purchase through Lemon Squeezy. Lemon Squeezy handles payment. Okie does not see card data.</p>
+        <p>
+          A license is sold per purchase through Gumroad. Gumroad is the seller and the payment processor (merchant of
+          record). Gumroad verifies license keys. Okie does not see card data.
+        </p>
         <p>You get a 7-day free trial. Okie records the trial start on your Mac.</p>
         <p>
           The purchase includes updates for one year from the purchase. After that year, the installed app keeps
           working. Update checks stop until another purchase.
         </p>
-        <p>If a license check cannot reach Lemon Squeezy, a key that was already active keeps working for 3 days.</p>
-        <p>Refunds follow the terms Lemon Squeezy shows at checkout.</p>
+        <p>If a license check cannot reach Gumroad, a key that was already active keeps working for 3 days.</p>
+        <p>Refunds follow the terms Gumroad shows at checkout.</p>
       </section>
 
       <section className="okie-legal-section">

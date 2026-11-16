@@ -31,7 +31,7 @@ The `#download` anchor is only a scroll target. It does not send this event.
 
 ### okie_buy_license_click
 
-A click on Buy license sends this. The link opens the Lemon Squeezy checkout. `transport_type` is `beacon`.
+A click on Buy license sends this. The link opens the Gumroad checkout. `transport_type` is `beacon`.
 
 | Param          | Example            |
 | -------------- | ------------------ |
